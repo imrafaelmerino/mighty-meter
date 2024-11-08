@@ -111,7 +111,7 @@ mm.leader.host$ mm-leader-run-tests \
 ### Options:
 
 - **duration**: test duration in seconds.
-- **num-threads**: threads per Worker (total = threads \* Worker count).
+- **num-threads**: threads per Worker (total = num-threads * Worker count).
 - **ramp-up**: ramp-up time for threads in seconds.
 - **leader-host**: hostname of the Leader.
 - **worker-hosts**: comma-separated Worker hostnames.

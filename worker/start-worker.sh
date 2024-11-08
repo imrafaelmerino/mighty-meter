@@ -9,7 +9,7 @@ display_usage() {
 -l rmi port to communicate with leader.
 -c path to log conf file.
 -h JVM Heap options. -Xms128m -Xmx512m by default.
--r Coordinator hostname"
+-r Leader hostname"
 echo ""
 }
 

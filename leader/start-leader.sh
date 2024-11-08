@@ -3,7 +3,7 @@
 set -e
 #set -o pipefail
 echo ""
-echo "Executing script:$0 $@"
+echo "Executing script: $0 $@"
 echo ""
 
 display_usage() {
@@ -112,8 +112,9 @@ CONCURRENT_USERS=$((NUMBER_OF_WORKERS * NUM_OF_THREADS))
 
 DATE=$(date +"%F-%T")
 DATE_FORMATTED="${DATE//:/_}"
-RESULT_FILE=${VOLUME_REPORTS}/${APP//:/_}/${TEST_NAME//:/_}/${CONCURRENT_USERS}-cu/${DATE_FORMATTED}/result.jtl
-REPORT_DIR=${VOLUME_REPORTS}/${APP//:/_}/${TEST_NAME//:/_}/${CONCURRENT_USERS}-cu/${DATE_FORMATTED}/report
+DIR=${VOLUME_REPORTS}/${APP}/${TEST_NAME}/${CONCURRENT_USERS}-cu/${DATE_FORMATTED}
+RESULT_FILE=${DIR}/result.jtl
+REPORT_DIR=${DIR}/report
 
 echo ""
 echo "The following variables have been defined:
@@ -180,7 +181,7 @@ ${CMD}
 #if report is not generated because of an error, remove the directory
 if [[ ! -f ${RESULT_FILE} ]]
   then
-    rm -rf ${REPORT_DIR}
+    rm -rf ${DIR}
 fi
 
 }

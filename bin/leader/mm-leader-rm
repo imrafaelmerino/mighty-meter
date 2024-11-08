@@ -4,7 +4,7 @@
 
 
 echo ""
-echo "Executing script:$0 $@"
+echo "Executing script: $0 $@"
 echo ""
 
 main() {

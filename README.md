@@ -83,7 +83,7 @@ Worker share a machine, they share the `mm-jmeter-logs` volume.
 ## <a name="jmx-config"></a> Configuring Your JMX File
 
 To persist results in InfluxDB and enable real-time monitoring in Grafana, include the MightyMeter
-listener in your JMX file, as shown in [example.jmx](script_examples/example.jmx). Only modify:
+listener in your JMX file, as shown in [example.jmx](examples/example.jmx). Only modify:
 
 - **eventTags** variable: set to your chosen value (will appear in the InfluxDB `events` and
   `statistics`).

@@ -4,7 +4,7 @@
 #set -o nounset
 #set -o xtrace
 echo ""
-echo "Executing script:$0 $@"
+echo "Executing script: $0 $@"
 echo ""
 
 main(){
@@ -15,13 +15,13 @@ source ${DIR}/../.defaults
 
 sleep 5
 
-curl -i --request POST \
+curl \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --retry-max-time 60 \
 --url ${_GRAFANA_URL}/datasources \
---header 'content-type: application/json' \
+--header 'Content-Type: application/json' \
 -d '{
   "name": "mighty-meter",
   "type": "influxdb",
@@ -33,55 +33,55 @@ curl -i --request POST \
 }'
 
 
-DASHBOARD_PAYLOAD="$DIR"/../../leader/dashboards/realtime.json
+DASHBOARD_PAYLOAD_REALTIME="$DIR"/../../leader/dashboards/realtime.json
 DASHBOARD_PAYLOAD_EXPLORE="$DIR"/../../leader/dashboards/explore.json
 DASHBOARD_PAYLOAD_COMP_BY_VERSION="$DIR"/../../leader/dashboards/compare_by_version.json
 DASHBOARD_PAYLOAD_COMP_BY_USERS="$DIR"/../../leader/dashboards/compare_by_users.json
 DASHBOARD_PAYLOAD_COMP_BY_TEST="$DIR"/../../leader/dashboards/compare_by_test.json
 
-curl -v \
--H 'Content-Type: application/json' \
+curl \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --url ${_GRAFANA_URL}/dashboards/db \
 --retry-max-time 60 \
--d @${DASHBOARD_PAYLOAD}
+--header 'Content-Type: application/json' \
+-d @${DASHBOARD_PAYLOAD_REALTIME}
 
-curl -v \
--H 'Content-Type: application/json' \
+curl \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --url ${_GRAFANA_URL}/dashboards/db \
 --retry-max-time 60 \
+--header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_EXPLORE}
 
-curl -v \
--H 'Content-Type: application/json' \
+curl \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --url ${_GRAFANA_URL}/dashboards/db \
 --retry-max-time 60 \
+--header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_TEST}
 
-curl -v \
--H 'Content-Type: application/json' \
+curl \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --url ${_GRAFANA_URL}/dashboards/db \
 --retry-max-time 60 \
+--header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_VERSION}
 
-curl -v \
--H 'Content-Type: application/json' \
+curl \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --url ${_GRAFANA_URL}/dashboards/db \
 --retry-max-time 60 \
+--header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_USERS}
 
 }

@@ -95,7 +95,7 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="JIG LISTENER">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="MIGHTY-METER LISTENER">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">

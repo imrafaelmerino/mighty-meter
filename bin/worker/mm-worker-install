@@ -15,10 +15,9 @@ display_usage() {
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
-source ../.versions
-source ../lib/functions
-
+source ${DIR}/../.defaults
+source ${DIR}/../.versions
+source ${DIR}/../lib/functions
 while [ "$1" != "" ]; do
     case $1 in
         --host )           shift
@@ -37,9 +36,9 @@ echo "$0 --host HOST"
 
 assertNotEmpty "Host required" ${HOST}
 
-../lib/mm-worker-build
+$DIR/../lib/mm-worker-build
 
-../lib/mm-worker-run --worker-host ${HOST}
+$DIR/../lib/mm-worker-run --worker-host ${HOST}
 
 echo '
 

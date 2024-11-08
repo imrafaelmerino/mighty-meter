@@ -9,9 +9,9 @@ echo ""
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.versions
-source ../.defaults
-source ../lib/functions
+source "${DIR}"/../.versions
+source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
 
 docker exec -it ${_NAME_LEADER_JMETER_START_TESTS_CONTAINER} stoptest.sh 4445
 

@@ -10,7 +10,7 @@ echo ""
 main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
+source "${DIR}"/../.defaults
 echo "it will delete all the information stored on the volumes:
 ${_NAME_VOLUME_JMETER_LOGS}
 ${_NAME_VOLUME_JMETER_REPORTS}

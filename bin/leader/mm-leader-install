@@ -10,17 +10,17 @@ echo ""
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source ../.versions
-source ../.defaults
-source ../lib/functions
+source "${DIR}"/../.versions
+source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
 
-../lib/mm-leader-build
+$DIR/../lib/mm-leader-build
 
-../lib/mm-leader-run
+$DIR/../lib/mm-leader-run
 
-../lib/mm-leader-init-metrics-db
+$DIR/../lib/mm-leader-init-metrics-db
 
-../lib/mm-leader-init-dashboards
+$DIR/../lib/mm-leader-init-dashboards
 
 }
 

@@ -10,7 +10,8 @@ echo ""
 
 main() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
+
+source "${DIR}"/../.defaults
 
 docker exec -it  ${_NAME_LEADER_INFLUXDB_CONTAINER} bash -c "influx v1 shell"
 }

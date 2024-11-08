@@ -11,7 +11,7 @@ echo ""
 
 main() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
+source "${DIR}"/../.defaults
 docker rm ${_NAME_LEADER_GRAFANA_CONTAINER}
 docker rm ${_NAME_LEADER_INFLUXDB_CONTAINER}
 docker rm ${_NAME_LEADER_NGINX_CONTAINER}

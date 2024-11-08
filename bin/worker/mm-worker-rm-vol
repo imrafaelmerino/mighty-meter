@@ -15,7 +15,7 @@ read x
 if [[ "$x" = "y" ]]
 then
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
+source ${DIR}/../.defaults
 docker volume rm ${_NAME_VOLUME_JMETER_LOGS}
 fi
 }

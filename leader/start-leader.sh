@@ -53,7 +53,7 @@ j) HEAP_OPTIONS="${OPTARG}";;
 k) FREQ_SAMPLES=${OPTARG};;
 n) TEST_NAME=${OPTARG};;
 r) RAMP_UP_PERIOD=${OPTARG};;
-s) EXECUTOR_HOSTS=${OPTARG};;
+s) WORKER_HOSTS=${OPTARG};;
 t) NUM_OF_THREADS=${OPTARG};;
 v) VERSION=${OPTARG};;
 p) FILE_PROP=${OPTARG};;
@@ -80,7 +80,7 @@ assertNotEmpty "influxdb url required" ${INFLUX_URL}
 assertNotEmpty "influxdb token required" ${INFLUX_TOKEN}
 assertNotEmpty "name test required" ${TEST_NAME}
 assertNotEmpty "number of threads required" ${NUM_OF_THREADS}
-assertNotEmpty "list of workers required" ${EXECUTOR_HOSTS}
+assertNotEmpty "list of workers required" ${WORKER_HOSTS}
 assertNotEmpty "ramp-up period required" ${RAMP_UP_PERIOD}
 assertNotEmpty "client rmi start port required" ${RMI_START_PORT}
 assertNotEmpty "Host name or ip required" ${HOST}
@@ -105,10 +105,10 @@ export HEAP="${HEAP_OPTIONS}"
 
 
 set +e
-NUMBER_OF_COMMAS=$(echo "${EXECUTOR_HOSTS}" | grep -o "," | wc -l)
+NUMBER_OF_COMMAS=$(echo "${WORKER_HOSTS}" | grep -o "," | wc -l)
 set -e
-NUMBER_OF_EXECUTORS=$((NUMBER_OF_COMMAS + 1))
-CONCURRENT_USERS=$((NUMBER_OF_EXECUTORS * NUM_OF_THREADS))
+NUMBER_OF_WORKERS=$((NUMBER_OF_COMMAS + 1))
+CONCURRENT_USERS=$((NUMBER_OF_WORKERS * NUM_OF_THREADS))
 
 DATE=$(date +"%F-%T")
 DATE_FORMATTED="${DATE//:/_}"
@@ -119,7 +119,7 @@ echo ""
 echo "The following variables have been defined:
 RESULT_FILE=${RESULT_FILE}
 NUM_OF_THREADS=${NUM_OF_THREADS}
-NUMBER_OF_EXECUTORS=${NUMBER_OF_EXECUTORS}
+NUMBER_OF_WORKERS=${NUMBER_OF_WORKERS}
 CONCURRENT_USERS=${CONCURRENT_USERS}"
 
 
@@ -150,7 +150,7 @@ CMD="jmeter -n -e -r \
 -Jclient.tries=10 \
 -Jclient.retries_delay=5000 \
 -Jclient.continue_on_fail=false  \
--Jremote_hosts=${EXECUTOR_HOSTS} \
+-Jremote_hosts=${WORKER_HOSTS} \
 -Jserver.rmi.ssl.disable=true \
 -Djava.rmi.server.hostname=${HOST} \
 -Jclient.rmi.localport=${RMI_START_PORT} \

@@ -9,9 +9,8 @@ echo ""
 
 main() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
-source ../.versions
-source ../.defaults
+source ${DIR}/../.defaults
+source ${DIR}/../.versions
 docker rmi ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION}
 }
 

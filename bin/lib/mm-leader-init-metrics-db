@@ -10,9 +10,9 @@ echo ""
 main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../lib/functions
-source ../.versions
-source ../.defaults
+source ${DIR}/functions
+source ${DIR}/../.versions
+source ${DIR}/../.defaults
 
 sleep 2
 

@@ -9,14 +9,14 @@ echo ""
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../lib/functions
-source ../.versions
-source ../.defaults
+source ${DIR}/functions
+source ${DIR}/../.versions
+source ${DIR}/../.defaults
 
 while [ "$1" != "" ]; do
     case $1 in
         --worker-host )          shift
-                                EXECUTOR_HOST=$1
+                                WORKER_HOST=$1
                                 ;;
         --image-name )          shift
                                 IMAGE_NAME=$1
@@ -46,7 +46,7 @@ if [[ -z $CONTAINER_NAME ]]
       CONTAINER_NAME="${_NAME_WORKER_SERVER_CONTAINER}"
 fi
 
-assertNotEmpty "--worker-host is required" ${EXECUTOR_HOST}
+assertNotEmpty "--worker-host is required" ${WORKER_HOST}
 assertNotEmpty "_RMI_REGISTRY_PORT is missing in .defaults file" ${_RMI_REGISTRY_PORT}
 assertNotEmpty "_RMI_SERVER_PORT is missing in .defaults file" ${_RMI_SERVER_PORT}
 assertNotEmpty "_NAME_WORKER_SERVER_CONTAINER is missing in .defaults file" ${_NAME_WORKER_SERVER_CONTAINER}
@@ -54,7 +54,7 @@ assertNotEmpty "_NAME_VOLUME_JMETER_LOGS is missing in .defaults file" ${_NAME_V
 assertNotEmpty "_PATH_VOLUME_JMETER_LOGS is missing in .defaults file" ${_PATH_VOLUME_JMETER_LOGS}
 
 
-ENTRYPOINT_ARGS="-p ${_RMI_REGISTRY_PORT} -l ${_RMI_SERVER_PORT} -r ${EXECUTOR_HOST}"
+ENTRYPOINT_ARGS="-p ${_RMI_REGISTRY_PORT} -l ${_RMI_SERVER_PORT} -r ${WORKER_HOST}"
 
 docker run -d --rm \
 --name="${CONTAINER_NAME}" \

@@ -10,7 +10,7 @@ echo ""
 
 main() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
+source ${DIR}/../.defaults
 docker stats ${_NAME_WORKER_SERVER_CONTAINER}
 }
 

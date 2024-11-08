@@ -16,9 +16,9 @@ fi
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
-source ../.versions
-source ../lib/functions
+source "${DIR}"/../.versions
+source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -38,13 +38,13 @@ while [ "$1" != "" ]; do
                                 RAMP_UP_PERIOD=$1
                                 ;;
         --worker-hosts )         shift
-                                EXECUTOR_HOSTS=$1
+                                WORKER_HOSTS=$1
                                 ;;
         --env )                 shift
                                 ENV=$1
                                 ;;
         --leader-host )         shift
-                                COORDINATOR_HOST=$1
+                                LEADER_HOST=$1
                                 ;;
         --num-threads )         shift
                                 NUM_OF_THREADS=$1
@@ -89,9 +89,9 @@ assertNotEmpty "--app required" ${APP}
 assertNotEmpty "--app-version required" ${APP_VERSION}
 assertNotEmpty "--duration required" ${DURATION}
 assertNotEmpty "--ramp-up required" ${RAMP_UP_PERIOD}
-assertNotEmpty "--worker-hosts required" ${EXECUTOR_HOSTS}
+assertNotEmpty "--worker-hosts required" ${WORKER_HOSTS}
 assertNotEmpty "--num-threads required" ${NUM_OF_THREADS}
-assertNotEmpty "--leader-host required" ${COORDINATOR_HOST}
+assertNotEmpty "--leader-host required" ${LEADER_HOST}
 assertNotEmpty "_INFLUX_DB_FREQ_SAMPLES is missing in .defaults" ${_INFLUX_DB_FREQ_SAMPLES}
 assertNotEmpty "_INFLUXDB_WRITE_URL is missing in .defaults" ${_INFLUXDB_WRITE_URL}
 assertNotEmpty "_INFLUXDB_TOKEN is missing in .defaults" ${_INFLUXDB_TOKEN}
@@ -113,13 +113,13 @@ ENTRYPOINT_ARGS="\
 -d ${DURATION} \
 -e ${ENV} \
 -f "/etc/jmeter/conf/jmx/${NAME_JMX_FILE}" \
--h ${COORDINATOR_HOST} \
+-h ${LEADER_HOST} \
 -i ${_INFLUXDB_WRITE_URL} \
 -j "${_LEADER_HEAP_OPTIONS}" \
 -k ${_INFLUX_DB_FREQ_SAMPLES} \
 -n ${TEST_NAME} \
 -r ${RAMP_UP_PERIOD} \
--s "${EXECUTOR_HOSTS}" \
+-s "${WORKER_HOSTS}" \
 -t ${NUM_OF_THREADS} \
 -v "${APP_VERSION}" \
 -p "/etc/jmeter/conf/props/${NAME_PROPERTIES_FILE}"

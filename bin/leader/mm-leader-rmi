@@ -11,8 +11,8 @@ echo ""
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../.defaults
-source ../.versions
+source "${DIR}"/../.versions
+source "${DIR}"/../.defaults
 
 docker rmi ${_NAME_LEADER_GRAFANA_IMAGE}:${_MIGHTY_METER_VERSION}
 docker rmi ${_NAME_LEADER_INFLUXDB_IMAGE}:${_MIGHTY_METER_VERSION}

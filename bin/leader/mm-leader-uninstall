@@ -7,10 +7,10 @@ echo "LEADER will be uninstalled, wanna continue (y/n)?"
 read x
 if [[ "$x" = "y" ]]
 then
-  ./mm-leader-stop
-  ./mm-leader-rm
-  ./mm-leader-rmi
-  ./mm-leader-rm-vol
+  $DIR/mm-leader-stop
+  $DIR/mm-leader-rm
+  $DIR/mm-leader-rmi
+  $DIR/mm-leader-rm-vol
 fi
 }
 

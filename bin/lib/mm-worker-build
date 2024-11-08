@@ -10,9 +10,9 @@ echo ""
 main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ../lib/functions
-source ../.versions
-source ../.defaults
+source ${DIR}/functions
+source ${DIR}/../.versions
+source ${DIR}/../.defaults
 
 assertNotEmpty "_MIGHTY_METER_VERSION variable should be defined in .versions file" ${_MIGHTY_METER_VERSION}
 assertNotEmpty "_JMETER_VERSION variable should be defined in .versions file" ${_JMETER_VERSION}

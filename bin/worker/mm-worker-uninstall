@@ -4,13 +4,13 @@
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-echo "JIG-EXECUTOR will be uninstalled, wanna continue (y/n)?"
+echo "WORKER will be uninstalled, wanna continue (y/n)?"
 read x
 if [[ "$x" = "y" ]]
 then
-  mm-worker-stop
-  mm-worker-rmi
-  mm-worker-rm-vol
+  $DIR/mm-worker-stop
+  $DIR/mm-worker-rmi
+  $DIR/mm-worker-rm-vol
 fi
 }
 

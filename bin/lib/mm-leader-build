@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -o errexit
-set -o pipefail
-set -o xtrace
+#set -o errexit
+#set -o pipefail
+#set -o xtrace
 
 echo ""
 echo "Executing script:$0 $@"

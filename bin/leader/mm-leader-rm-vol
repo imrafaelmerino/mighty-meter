@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -o errexit
-set -o pipefail
-set -o nounset
+#set -o errexit
+#set -o pipefail
+#set -o nounset
 
 echo ""
 echo "Executing script:$0 $@"
@@ -29,7 +29,7 @@ for volume in ${_NAME_VOLUME_JMETER_LOGS} ${_NAME_VOLUME_JMETER_CONF} ${_NAME_VO
     echo "Removing volume: $volume"
     docker volume rm "$volume"
   else
-    echo "Volume `$volume` does not exist, skipping."
+    echo "Volume $volume does not exist, skipping."
   fi
 done
 

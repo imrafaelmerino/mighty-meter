@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-set -o pipefail
-set -o nounset
+#set -o pipefail
+#set -o nounset
 
 echo ""
 echo "Executing script:$0 $@"
@@ -15,6 +15,7 @@ source "${DIR}"/../.defaults
 docker stop ${_NAME_LEADER_GRAFANA_CONTAINER}
 docker stop ${_NAME_LEADER_INFLUXDB_CONTAINER}
 docker stop ${_NAME_LEADER_NGINX_CONTAINER}
+
 }
 
 main "$@"

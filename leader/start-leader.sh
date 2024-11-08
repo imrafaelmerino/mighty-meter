@@ -1,7 +1,7 @@
 #!/bin/bash
-set -o xtrace
+#set -o xtrace
 set -e
-set -o pipefail
+#set -o pipefail
 echo ""
 echo "Executing script:$0 $@"
 echo ""
@@ -85,7 +85,7 @@ assertNotEmpty "ramp-up period required" ${RAMP_UP_PERIOD}
 assertNotEmpty "client rmi start port required" ${RMI_START_PORT}
 assertNotEmpty "Host name or ip required" ${HOST}
 
-set -o nounset
+#set -o nounset
 
 if [[ ! -f ${FILE_JMX} ]]
   then

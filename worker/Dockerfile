@@ -1,4 +1,4 @@
-FROM myjmeter:1.0
+FROM mighty-jmeter:1.0.0
 ARG VOLUME_LOGS
 
 RUN mkdir -p ${VOLUME_LOGS}

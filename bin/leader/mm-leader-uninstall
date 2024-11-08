@@ -4,6 +4,7 @@ main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "LEADER will be uninstalled, wanna continue (y/n)?"
+
 read x
 if [[ "$x" = "y" ]]
 then

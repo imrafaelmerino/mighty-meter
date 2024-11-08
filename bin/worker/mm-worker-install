@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
-#set -o errexit
-#set -o pipefail
-#set -o nounset
-#set -o xtrace
+set -o errexit
+set -o pipefail
+set -o nounset
+
 echo ""
 echo "Executing script:$0 $@"
 echo ""
 
 display_usage() {
   echo -e "-h Host or IP of the machine where the worker will be running
-           -i Name of the image. Optional.
-  "
+           -i Name of the image. Optional."
 }
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
 source ${DIR}/../.versions
 source ${DIR}/../lib/functions
+
 while [ "$1" != "" ]; do
     case $1 in
         --host )           shift
@@ -40,26 +41,20 @@ $DIR/../lib/mm-worker-build
 
 $DIR/../lib/mm-worker-run --worker-host ${HOST}
 
-echo '
+echo "
+     _______     _______
+    /       \   /       \
+   |  O   O  | |   >_<   |
+   |    ^    | |    ^    |
+   |   / \   | |   / \   |
+    \_______/   \_______/
 
-\__    _/\__   __/(  ____ \
-   )  (     ) (   | (    \/
-   |  |     | |   | |
-   |  |     | |   | | ____
-   |  |     | |   | | \_  )
-|\_)  )  ___) (___| (___) |
-(____/   \_______/(_______)
++------------------------------------------+
+|    Mighty Meter Worker Installed         |
++------------------------------------------+
 
-_________ _        _______ _________ _______  _        _        _______  ______   _
-\__   __/( (    /|(  ____ \\__   __/(  ___  )( \      ( \      (  ____ \(  __  \ ( )
-   ) (   |  \  ( || (    \/   ) (   | (   ) || (      | (      | (    \/| (  \  )| |
-   | |   |   \ | || (_____    | |   | (___) || |      | |      | (__    | |   ) || |
-   | |   | (\ \) |(_____  )   | |   |  ___  || |      | |      |  __)   | |   | || |
-   | |   | | \   |      ) |   | |   | (   ) || |      | |      | (      | |   ) |(_)
-___) (___| )  \  |/\____) |   | |   | )   ( || (____/\| (____/\| (____/\| (__/  ) _
-\_______/|/    )_)\_______)   )_(   |/     \|(_______/(_______/(_______/(______/ (_)
+"
 
-'
 
 }
 

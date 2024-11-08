@@ -24,14 +24,14 @@ JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${_JME
 
 echo ${JMETER_URL}
 echo "Building jmeter image..."
-docker build -t myjmeter:${_MIGHTY_METER_VERSION} \
+docker build -t mighty-jmeter:${_MIGHTY_METER_VERSION} \
 --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} \
-../../myjmeter
+${DIR}/../../mighty-jmeter
 
 echo "Building mm-worker image..."
 docker build -t ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
-../../worker
+${DIR}/../../worker
 
 }
 

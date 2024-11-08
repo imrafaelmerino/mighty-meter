@@ -11,6 +11,7 @@ main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${DIR}/../.defaults
+
 docker volume inspect ${_NAME_VOLUME_JMETER_LOGS}
 }
 

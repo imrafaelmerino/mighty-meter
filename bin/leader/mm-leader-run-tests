@@ -15,7 +15,9 @@ if [[ ( $1 == "") ]]
 fi
 
 main(){
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source "${DIR}"/../.versions
 source "${DIR}"/../.defaults
 source "${DIR}"/../lib/functions

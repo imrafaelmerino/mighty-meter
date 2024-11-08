@@ -2,7 +2,6 @@
 
 set -o pipefail
 set -o nounset
-# set -o xtrace
 
 echo ""
 echo "Executing script:$0 $@"

@@ -1,4 +1,4 @@
-FROM myjmeter:1.0
+FROM mighty-jmeter:1.0.0
 ARG VOLUME_REPORTS
 ARG VOLUME_CONF
 ARG VOLUME_LOGS
@@ -12,7 +12,6 @@ RUN mkdir -p /etc/jmeter/conf/props
 
 COPY start-leader.sh  /etc/jmeter/scripts/start-leader.sh
 RUN chmod +x /etc/jmeter/scripts/*
-
 
 COPY log4j2-leader.xml /etc/jmeter/log-conf.xml
 

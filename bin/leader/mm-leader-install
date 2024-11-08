@@ -2,17 +2,13 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-# set -o xtrace
+
 echo ""
 echo "Executing script:$0 $@"
 echo ""
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-source "${DIR}"/../.versions
-source "${DIR}"/../.defaults
-source "${DIR}"/../lib/functions
 
 $DIR/../lib/mm-leader-build
 

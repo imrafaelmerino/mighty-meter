@@ -7,6 +7,7 @@ set -o nounset
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${DIR}/../.defaults
+
 docker exec -it ${_NAME_WORKER_SERVER_CONTAINER} bash
 }
 

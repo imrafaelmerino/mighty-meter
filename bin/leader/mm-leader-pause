@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -o pipefail
 set -o nounset
-# set -o xtrace
 
 
 echo ""
@@ -12,6 +11,7 @@ main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}"/../.defaults
+
 docker pause ${_NAME_LEADER_GRAFANA_CONTAINER}
 docker pause ${_NAME_LEADER_INFLUXDB_CONTAINER}
 docker pause ${_NAME_LEADER_NGINX_CONTAINER}

@@ -9,7 +9,7 @@ echo ""
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source functions
+source ../lib/functions
 source ../.versions
 source ../.defaults
 
@@ -37,7 +37,7 @@ done
 if [[ -z $IMAGE_NAME ]]
     then
       assertNotEmpty "_NAME_WORKER_SERVER_IMAGE is missing in .defaults file." ${_NAME_WORKER_SERVER_IMAGE}
-      IMAGE_NAME="${_NAME_WORKER_SERVER_IMAGE}:${_JIG_VERSION}"
+      IMAGE_NAME="${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION}"
 fi
 
 if [[ -z $CONTAINER_NAME ]]

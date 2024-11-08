@@ -10,7 +10,7 @@ echo ""
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source functions
+source ../lib/functions
 source ../.versions
 source ../.defaults
 
@@ -34,7 +34,7 @@ docker run -d \
 --link ${_NAME_LEADER_GRAFANA_CONTAINER} \
 -v "${_NAME_VOLUME_JMETER_REPORTS}":/var/lib/mighty-meter/reports:ro \
 -v "${_NAME_VOLUME_JMETER_LOGS}":/var/lib/mighty-meter/logs:ro \
- "${_NAME_LEADER_NGINX_IMAGE}":${_JIG_VERSION} nginx -g 'daemon off;'
+ "${_NAME_LEADER_NGINX_IMAGE}":${_MIGHTY_METER_VERSION} nginx -g 'daemon off;'
 
 }
 main "$@"

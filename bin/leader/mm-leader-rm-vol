@@ -22,12 +22,14 @@ wanna continue (y/n)?"
 read x
 if [[ "$x" = "y" ]]
 then
-docker volume rm \
-${_NAME_VOLUME_JMETER_LOGS} \
-${_NAME_VOLUME_JMETER_CONF} \
-${_NAME_VOLUME_JMETER_REPORTS} \
-${_NAME_VOLUME_INFLUXDB} \
-${_NAME_VOLUME_GRAFANA}
+for volume in ${_NAME_VOLUME_JMETER_LOGS} ${_NAME_VOLUME_JMETER_CONF} ${_NAME_VOLUME_JMETER_REPORTS} ${_NAME_VOLUME_INFLUXDB} ${_NAME_VOLUME_GRAFANA}; do
+  if docker volume ls -q | grep -q "$volume"; then
+    echo "Removing volume: $volume"
+    docker volume rm "$volume"
+  else
+    echo "Volume `$volume` does not exist, skipping."
+  fi
+done
 
 fi
 

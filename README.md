@@ -20,8 +20,8 @@
 
 MightyMeter (based on InfluxDB, Grafana and JMeter) is a tool that simplifies functional load
 testing and performance measurement with [JMeter](https://jmeter.apache.org/). MightyMeter provides
-quick and easy setup of a group of JMeter servers with one central **Leader** node managing multiple
-**Worker** nodes.
+quick and easy setup of a group of JMeter servers with one central **Leader** node (aka master) managing multiple
+**Worker** nodes (aka slaves).
 
 The Leader sends the test configuration to each Worker. As the test runs, Workers send their results
 to the Leader, which stores them in an [InfluxDB](https://www.influxdata.com/) database. MightyMeter

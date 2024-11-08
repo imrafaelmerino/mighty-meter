@@ -2,7 +2,7 @@
 set -o errexit
 set -o pipefail
 #set -o nounset
-#set -o xtrace
+set -o xtrace
 echo ""
 echo "Executing script:$0 $@"
 echo ""
@@ -10,11 +10,12 @@ echo ""
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source functions
+echo `pwd`
+source ../lib/functions
 source ../.versions
 source ../.defaults
 
-assertNotEmpty "_JIG_VERSION variable should be defined in .versions file" ${_JIG_VERSION}
+assertNotEmpty "_MIGHTY_METER_VERSION variable should be defined in .versions file" ${_MIGHTY_METER_VERSION}
 assertNotEmpty "_JMETER_VERSION variable should be defined in .versions file" ${_JMETER_VERSION}
 assertNotEmpty "_NAME_LEADER_NGINX_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_NGINX_IMAGE}
 assertNotEmpty "_NAME_LEADER_JMETER_START_TESTS_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}
@@ -26,11 +27,11 @@ assertNotEmpty "_PATH_VOLUME_JMETER_REPORTS variable should be defined in .defau
 JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${_JMETER_VERSION}.tgz"
 
 echo "Building jmeter image..."
-docker build -t myjmeter:${_JIG_VERSION} --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} ../../myjmeter
+docker build -t myjmeter:${_MIGHTY_METER_VERSION} --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} ../../myjmeter
 echo "Building nginx image..."
-docker build -t ${_NAME_LEADER_NGINX_IMAGE}:${_JIG_VERSION} --build-arg NGINX_VERSION=${_NGINX_VERSION} ../../leader/nginx/
+docker build -t ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION} --build-arg NGINX_VERSION=${_NGINX_VERSION} ../../leader/nginx/
 echo "Building mm-leader image..."
-docker build -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_JIG_VERSION} \
+docker build -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
 --build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
 --build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \

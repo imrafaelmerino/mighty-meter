@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+#set -o xtrace
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+main(){
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source functions
+source ../.versions
+source ../.defaults
+
+sleep 5
+
+curl -i --request POST \
+--retry 10 \
+--retry-delay 2 \
+--max-time 10 \
+--retry-max-time 60 \
+--url ${_GRAFANA_URL}/datasources \
+--header 'content-type: application/json' \
+-d '{
+  "name": "mighty-meter",
+  "type": "influxdb",
+  "access": "proxy",
+  "url": "http://'${_NAME_LEADER_INFLUXDB_CONTAINER}':'${_INFLUX_DB_PORT}'",
+  "isDefault": true,
+  "jsonData" : { "version": "Flux", "organization": "'${_INFLUXDB_ORG}'", "defaultBucket":"'${_INFLUXDB_BUCKET_NAME}'", "tlsSkipVerify": true },
+  "secureJsonData": { "token" : "'${_INFLUXDB_TOKEN}'"}
+}'
+
+
+DASHBOARD_PAYLOAD=../../leader/dashboards/realtime.json
+DASHBOARD_PAYLOAD_EXPLORE=../../leader/dashboards/explore.json
+DASHBOARD_PAYLOAD_COMP_BY_VERSION=../../leader/dashboards/compare_by_version.json
+DASHBOARD_PAYLOAD_COMP_BY_USERS=../../leader/dashboards/compare_by_users.json
+DASHBOARD_PAYLOAD_COMP_BY_TEST=../../leader/dashboards/compare_by_test.json
+
+curl -v \
+-H 'Content-Type: application/json' \
+--retry 10 \
+--retry-delay 2 \
+--max-time 10 \
+--url ${_GRAFANA_URL}/dashboards/db \
+--retry-max-time 60 \
+-d @${DASHBOARD_PAYLOAD}
+
+curl -v \
+-H 'Content-Type: application/json' \
+--retry 10 \
+--retry-delay 2 \
+--max-time 10 \
+--url ${_GRAFANA_URL}/dashboards/db \
+--retry-max-time 60 \
+-d @${DASHBOARD_PAYLOAD_EXPLORE}
+
+curl -v \
+-H 'Content-Type: application/json' \
+--retry 10 \
+--retry-delay 2 \
+--max-time 10 \
+--url ${_GRAFANA_URL}/dashboards/db \
+--retry-max-time 60 \
+-d @${DASHBOARD_PAYLOAD_COMP_BY_TEST}
+
+curl -v \
+-H 'Content-Type: application/json' \
+--retry 10 \
+--retry-delay 2 \
+--max-time 10 \
+--url ${_GRAFANA_URL}/dashboards/db \
+--retry-max-time 60 \
+-d @${DASHBOARD_PAYLOAD_COMP_BY_VERSION}
+
+curl -v \
+-H 'Content-Type: application/json' \
+--retry 10 \
+--retry-delay 2 \
+--max-time 10 \
+--url ${_GRAFANA_URL}/dashboards/db \
+--retry-max-time 60 \
+-d @${DASHBOARD_PAYLOAD_COMP_BY_USERS}
+
+}
+
+main "$@"
+

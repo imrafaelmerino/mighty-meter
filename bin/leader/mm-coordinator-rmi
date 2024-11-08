@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+set -o nounset
+# set -o xtrace
+
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+main() {
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ../.defaults
+source ../.versions
+
+docker rmi ${_NAME_LEADER_GRAFANA_IMAGE}:${_JIG_VERSION}
+docker rmi ${_NAME_LEADER_INFLUXDB_IMAGE}:${_JIG_VERSION}
+docker rmi ${_NAME_LEADER_NGINX_IMAGE}:${_JIG_VERSION}
+docker rmi ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_JIG_VERSION}
+
+}
+
+main "$@"

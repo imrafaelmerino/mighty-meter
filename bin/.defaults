@@ -1,0 +1,58 @@
+######## MYJMETER PROPERTIES ##############
+
+_RMI_REGISTRY_PORT=1099
+_RMI_SERVER_PORT=34567
+_RMI_CLIENT_PORT=45678
+_LEADER_HEAP_OPTIONS="-Xms512m"
+_WORKER_HEAP_OPTIONS="-Xms512m"
+
+######## GRAFANA PROPERTIES ###############
+
+_GRAFANA_PORT=3000
+_NAME_DATASOURCE=mighty-meter
+_NAME_DASHBOARD=mighty-meter
+_GRAFANA_URL="http://admin:admin@localhost:${_GRAFANA_PORT}/api"
+
+
+######### DOCKER PROPERTIES ###############
+
+_NAME_LEADER_GRAFANA_CONTAINER=mm-leader-grafana
+_NAME_LEADER_INFLUXDB_CONTAINER=mm-leader-metrics-database
+_NAME_LEADER_NGINX_CONTAINER=mm-leader-http-server
+_NAME_WORKER_SERVER_CONTAINER=mm-worker-server
+_NAME_LEADER_JMETER_START_TESTS_CONTAINER=mm-leader-testing
+
+_NAME_LEADER_JMETER_START_TESTS_IMAGE=mighty-meter/leader/runtests
+_NAME_LEADER_GRAFANA_IMAGE=mighty-meter/leader/grafana
+_NAME_LEADER_INFLUXDB_IMAGE=mighty-meter/leader/influxdb
+_NAME_LEADER_NGINX_IMAGE=mighty-meter/leader/nginx
+_NAME_WORKER_SERVER_IMAGE=mighty-meter/worker/server
+
+_NAME_VOLUME_JMETER_CONF=mm-jmeter-conf
+_PATH_VOLUME_JMETER_CONF=/etc/jmeter/conf
+
+_NAME_VOLUME_JMETER_REPORTS=mm-tests-reports
+_PATH_VOLUME_JMETER_REPORTS=/data/jmeter/reports
+
+_NAME_VOLUME_JMETER_LOGS=mm-jmeter-logs
+_PATH_VOLUME_JMETER_LOGS=/var/log/jmeter
+
+_NAME_VOLUME_GRAFANA=mm-dashboards
+_NAME_VOLUME_INFLUXDB=mm-metrics-db
+
+
+########## INFLUXDB PROPERTIES ##############
+
+_INFLUXDB_BUCKET_NAME=mighty-meter
+_INFLUXDB_TOKEN=d8350d68-b8d9-11ed-afa1-0242ac120002
+_INFLUXDB_ORG=MyOrg
+_INFLUXDB_USERNAME=mighty-meter
+_INFLUXDB_PASSWORD=mighty-meter
+_INFLUX_DB_PORT=8086
+_INFLUX_DB_FREQ_SAMPLES=5
+_INFLUXDB_WRITE_URL="http://${_NAME_LEADER_INFLUXDB_CONTAINER}:${_INFLUX_DB_PORT}/api/v2/write?bucket=${_INFLUXDB_BUCKET_NAME}&org=${_INFLUXDB_ORG}"
+
+########## NGINX PROPERTIES #################
+
+_NGINX_PORT=80
+

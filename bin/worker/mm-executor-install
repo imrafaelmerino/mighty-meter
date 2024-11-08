@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#set -o errexit
+#set -o pipefail
+#set -o nounset
+#set -o xtrace
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+display_usage() {
+  echo -e "-h Host or IP of the machine where the worker will be running
+           -i Name of the image. Optional.
+  "
+}
+
+main(){
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ../.defaults
+source ../.versions
+source ../lib/functions
+
+while [ "$1" != "" ]; do
+    case $1 in
+        --host )           shift
+                           HOST=$1
+                           ;;
+        --help )           usage
+                           exit
+                           ;;
+    esac
+    shift
+done
+
+usage(){
+echo "$0 --host HOST"
+}
+
+assertNotEmpty "Host required" ${HOST}
+
+../lib/mm-worker-build
+
+../lib/mm-worker-run --worker-host ${HOST}
+
+echo '
+
+\__    _/\__   __/(  ____ \
+   )  (     ) (   | (    \/
+   |  |     | |   | |
+   |  |     | |   | | ____
+   |  |     | |   | | \_  )
+|\_)  )  ___) (___| (___) |
+(____/   \_______/(_______)
+
+_________ _        _______ _________ _______  _        _        _______  ______   _
+\__   __/( (    /|(  ____ \\__   __/(  ___  )( \      ( \      (  ____ \(  __  \ ( )
+   ) (   |  \  ( || (    \/   ) (   | (   ) || (      | (      | (    \/| (  \  )| |
+   | |   |   \ | || (_____    | |   | (___) || |      | |      | (__    | |   ) || |
+   | |   | (\ \) |(_____  )   | |   |  ___  || |      | |      |  __)   | |   | || |
+   | |   | | \   |      ) |   | |   | (   ) || |      | |      | (      | |   ) |(_)
+___) (___| )  \  |/\____) |   | |   | )   ( || (____/\| (____/\| (____/\| (__/  ) _
+\_______/|/    )_)\_______)   )_(   |/     \|(_______/(_______/(_______/(______/ (_)
+
+'
+
+}
+
+
+
+main "$@"

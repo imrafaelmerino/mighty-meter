@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+# set -o xtrace
+
+main(){
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ../.defaults
+docker exec -it ${_NAME_WORKER_SERVER_CONTAINER} bash
+
+}
+
+main "$@"

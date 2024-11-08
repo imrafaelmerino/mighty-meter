@@ -1,0 +1,630 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "compare-by-users",
+    "url": "/d/Hs76iD-4k/compare-by-users",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2023-03-10T17:57:13Z",
+    "updated": "2023-03-15T15:31:38Z",
+    "updatedBy": "admin",
+    "createdBy": "admin",
+    "version": 8,
+    "hasAcl": false,
+    "isFolder": false,
+    "folderId": 0,
+    "folderUid": "",
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": true,
+        "canEdit": true,
+        "canDelete": true
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    },
+    "publicDashboardAccessToken": "",
+    "publicDashboardUid": "",
+    "publicDashboardEnabled": false
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations \u0026 Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "influxdb",
+          "name": "mighty-meter"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "max pct99"
+            }
+          ]
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"avg\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e mean()\n  |\u003e rename(columns: {_value: \"avg\"})\n  |\u003e group()",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"min\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e min()\n  |\u003e rename(columns: {_value: \"min\"})\n  |\u003e group()",
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"max\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e max()\n  |\u003e rename(columns: {_value: \"max\"})\n  |\u003e group()",
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"pct99.0\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e mean()\n  |\u003e rename(columns: {_value: \"avg pct99\"})\n  |\u003e group()",
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"pct99.0\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e min()\n  |\u003e rename(columns: {_value: \"min pct99\"})\n  |\u003e group()",
+            "refId": "E"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"pct99.0\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e max()\n  |\u003e rename(columns: {_value: \"max pct99\"})\n  |\u003e group()",
+            "refId": "F"
+          }
+        ],
+        "title": "latency (ms)",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "name": "mighty-meter"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 6
+        },
+        "id": 3,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "max pct99"
+            }
+          ]
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e mean()\n  |\u003e rename(columns: {_value: \"avg\"})\n  |\u003e group()",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e min()\n  |\u003e rename(columns: {_value: \"min\"})\n  |\u003e group()",
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e max()\n  |\u003e rename(columns: {_value: \"max\"})\n  |\u003e group()",
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e quantile(q: 0.99)\n  |\u003e mean()\n  |\u003e rename(columns: {_value: \"avg pct99\"})\n  |\u003e group()",
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e quantile(q: 0.99)\n  |\u003e max()\n  |\u003e rename(columns: {_value: \"max pct99\"})\n  |\u003e group()",
+            "refId": "F"
+          }
+        ],
+        "title": "throughput (op/s)",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "name": "mighty-meter"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "sent"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "decbytes"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "received"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "decbytes"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 4,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "max pct99"
+            }
+          ]
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"sb\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e sum()\n  |\u003e rename(columns: {_value: \"sent\"})\n  |\u003e group()",
+            "refId": "G"
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "name": "mighty-meter"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"users\"] =~ /^${users:regex}$/)\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"rb\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r[\"transaction\"] =~ /^${tx}$/  and r.application == \"${app}\" and r.env == \"${env}\"  and r.version == \"${version}\" and r.duration == \"${duration}\" and r.test == \"${test}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"users\"])\n  |\u003e group(columns: [\"transaction\",\"users\"])\n  |\u003e sum()\n  |\u003e rename(columns: {_value: \"received\"})\n  |\u003e group()",
+            "refId": "H"
+          }
+        ],
+        "title": "bytes",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "refresh": "",
+    "revision": 1,
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [
+      "jmeter",
+      "influxdb"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "app1",
+            "value": "app1"
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\")\n|\u003e keyValues(keyColumns: [\"application\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "",
+          "multi": false,
+          "name": "app",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\")\n|\u003e keyValues(keyColumns: [\"application\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "selected": false,
+            "text": "pro",
+            "value": "pro"
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\")\n|\u003e keyValues(keyColumns: [\"env\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "env",
+          "multi": false,
+          "name": "env",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\")\n|\u003e keyValues(keyColumns: [\"env\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "selected": false,
+            "text": "third_test",
+            "value": "third_test"
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\")\n|\u003e keyValues(keyColumns: [\"test\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "test",
+          "multi": false,
+          "name": "test",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\")\n|\u003e keyValues(keyColumns: [\"test\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "selected": false,
+            "text": "30",
+            "value": "30"
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.test == \"[[test:raw]]\")\n|\u003e keyValues(keyColumns: [\"duration\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "duration",
+          "multi": false,
+          "name": "duration",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.test == \"[[test:raw]]\")\n|\u003e keyValues(keyColumns: [\"duration\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "selected": true,
+            "text": [
+              "2.0.0",
+              "3.0.0"
+            ],
+            "value": [
+              "2.0.0",
+              "3.0.0"
+            ]
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\" and r.test == \"[[test:raw]]\" and r.duration == \"[[duration]]\" )\n|\u003e keyValues(keyColumns: [\"version\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "version",
+          "multi": false,
+          "name": "version",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\" and r.test == \"[[test:raw]]\" and r.duration == \"[[duration]]\" )\n|\u003e keyValues(keyColumns: [\"version\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\" and r.test == \"[[test:raw]]\" and r.duration == \"[[duration]]\" and r.version == \"[[version]]\")\n|\u003e keyValues(keyColumns: [\"users\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "users",
+          "multi": true,
+          "name": "users",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\" and r.test == \"[[test:raw]]\" and r.duration == \"[[duration]]\" and r.version == \"[[version]]\")\n|\u003e keyValues(keyColumns: [\"users\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": ".+",
+            "value": ".+"
+          },
+          "hide": 0,
+          "label": "tx",
+          "name": "tx",
+          "options": [
+            {
+              "selected": true,
+              "text": ".+",
+              "value": ".+"
+            }
+          ],
+          "query": ".+",
+          "skipUrlSync": false,
+          "type": "textbox"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30d",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "COMPARE BY USERS",
+    "uid": null,
+    "version": 1,
+    "weekStart": ""
+  }
+}

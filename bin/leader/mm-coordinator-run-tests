@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+set -e
+set -o pipefail
+set -o xtrace
+
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+if [[ ( $1 == "") ]]
+  then
+    echo "This script requires arguments:"
+    display_usage
+    exit 1
+fi
+
+main(){
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ../.defaults
+source ../.versions
+source ../lib/functions
+
+while [ "$1" != "" ]; do
+    case $1 in
+        --app )                 shift
+                                APP=$1
+                                ;;
+        --duration )            shift
+                                DURATION=$1
+                                ;;
+        --jmx-file )            shift
+                                JMX_FILE=$1
+                                ;;
+        --props-file )          shift
+                                PROPS_FILE=$1
+                                ;;
+        --ramp-up )             shift
+                                RAMP_UP_PERIOD=$1
+                                ;;
+        --worker-hosts )         shift
+                                EXECUTOR_HOSTS=$1
+                                ;;
+        --env )                 shift
+                                ENV=$1
+                                ;;
+        --leader-host )         shift
+                                COORDINATOR_HOST=$1
+                                ;;
+        --num-threads )         shift
+                                NUM_OF_THREADS=$1
+                                ;;
+        --app-version )         shift
+                                APP_VERSION=$1
+                                ;;
+        --test-name )           shift
+                                TEST_NAME=$1
+                                ;;
+        --help )                usage
+                                exit
+                                ;;
+    esac
+    shift
+done
+
+assertNotEmpty "--jmx-file required" ${JMX_FILE}
+
+if [[ ! -f ${JMX_FILE} ]]
+  then
+    echo "File ${JMX_FILE} not found"
+    display_usage
+    exit 1
+fi
+
+assertNotEmpty "--props-file required" ${PROPS_FILE}
+
+
+if [[ ! -f ${PROPS_FILE} ]]
+  then
+    echo "File ${PROPS_FILE} not found"
+    display_usage
+    exit 1
+fi
+
+source "$PROPS_FILE"
+
+assertNotEmpty "--test-name required" ${TEST_NAME}
+assertNotEmpty "--env required" ${ENV}
+assertNotEmpty "--app required" ${APP}
+assertNotEmpty "--app-version required" ${APP_VERSION}
+assertNotEmpty "--duration required" ${DURATION}
+assertNotEmpty "--ramp-up required" ${RAMP_UP_PERIOD}
+assertNotEmpty "--worker-hosts required" ${EXECUTOR_HOSTS}
+assertNotEmpty "--num-threads required" ${NUM_OF_THREADS}
+assertNotEmpty "--leader-host required" ${COORDINATOR_HOST}
+assertNotEmpty "_INFLUX_DB_FREQ_SAMPLES is missing in .defaults" ${_INFLUX_DB_FREQ_SAMPLES}
+assertNotEmpty "_INFLUXDB_WRITE_URL is missing in .defaults" ${_INFLUXDB_WRITE_URL}
+assertNotEmpty "_INFLUXDB_TOKEN is missing in .defaults" ${_INFLUXDB_TOKEN}
+assertNotEmpty "_RMI_CLIENT_PORT is missing in .defaults" ${_RMI_CLIENT_PORT}
+assertNotEmpty "_NAME_LEADER_JMETER_START_TESTS_CONTAINER is missing in .defaults file" ${_NAME_LEADER_JMETER_START_TESTS_CONTAINER}
+
+
+RMI_PORT_1=${_RMI_CLIENT_PORT}
+RMI_PORT_2=$(( $RMI_PORT_1 + 1 ))
+RMI_PORT_3=$(( $RMI_PORT_2 + 1 ))
+
+NAME_JMX_FILE=$(basename "${JMX_FILE}")
+NAME_PROPERTIES_FILE=$(basename "${PROPS_FILE}")
+
+ENTRYPOINT_ARGS="\
+-a ${APP} \
+-b ${_INFLUXDB_TOKEN}
+-c ${RMI_PORT_1} \
+-d ${DURATION} \
+-e ${ENV} \
+-f "/etc/jmeter/conf/jmx/${NAME_JMX_FILE}" \
+-h ${COORDINATOR_HOST} \
+-i ${_INFLUXDB_WRITE_URL} \
+-j "${_LEADER_HEAP_OPTIONS}" \
+-k ${_INFLUX_DB_FREQ_SAMPLES} \
+-n ${TEST_NAME} \
+-r ${RAMP_UP_PERIOD} \
+-s "${EXECUTOR_HOSTS}" \
+-t ${NUM_OF_THREADS} \
+-v "${APP_VERSION}" \
+-p "/etc/jmeter/conf/props/${NAME_PROPERTIES_FILE}"
+"
+
+NAME_CONTAINER="${_NAME_LEADER_JMETER_START_TESTS_CONTAINER}"
+
+docker create --rm  \
+-p=${RMI_PORT_1}:${RMI_PORT_1} \
+-p=${RMI_PORT_2}:${RMI_PORT_2} \
+-p=${RMI_PORT_3}:${RMI_PORT_3} \
+-v ${_NAME_VOLUME_JMETER_CONF}:/etc/jmeter/conf \
+-v ${_NAME_VOLUME_JMETER_REPORTS}:/data/jmeter/reports \
+-v ${_NAME_VOLUME_JMETER_LOGS}:/var/log/jmeter \
+--link ${_NAME_LEADER_INFLUXDB_CONTAINER} \
+--name ${NAME_CONTAINER} \
+${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_JIG_VERSION} \
+${ENTRYPOINT_ARGS}
+
+
+docker cp ${JMX_FILE} ${NAME_CONTAINER}:/etc/jmeter/conf/jmx/
+docker cp ${PROPS_FILE}  ${NAME_CONTAINER}:/etc/jmeter/conf/props/
+
+docker start -a ${NAME_CONTAINER}
+
+}
+
+display_usage() {
+  echo "
+  --app is required (name of the application under test)
+  --app-version is required (version of the application under test)
+  --duration is required (Duration of the test in seconds)
+  --jmx-file is required (Path to the jmx configuration file)
+  --props-file is required (Path to the property file)
+  --ramp-up is required
+  --worker-hosts is required (host1:port1,host2:port2...)
+  --num-threads is required (Number of threads per worker)
+  "
+}
+
+main "$@"

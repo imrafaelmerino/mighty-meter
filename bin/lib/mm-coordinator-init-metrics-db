@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+#set -o xtrace
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+main(){
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source functions
+source ../.versions
+source ../.defaults
+
+sleep 2
+
+docker exec -it ${_NAME_LEADER_INFLUXDB_CONTAINER} bash -c \
+"influx setup \
+--bucket ${_INFLUXDB_BUCKET_NAME} \
+--token=${_INFLUXDB_TOKEN} \
+--org=${_INFLUXDB_ORG} \
+--username=${_INFLUXDB_USERNAME} \
+--password=${_INFLUXDB_PASSWORD} --force"
+}
+
+main "$@"

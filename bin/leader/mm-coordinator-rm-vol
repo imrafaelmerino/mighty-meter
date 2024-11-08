@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+# set -o xtrace
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+main(){
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ../.defaults
+echo "it will delete all the information stored on the volumes:
+${_NAME_VOLUME_JMETER_LOGS}
+${_NAME_VOLUME_JMETER_REPORTS}
+${_NAME_VOLUME_JMETER_CONF}
+${_NAME_VOLUME_INFLUXDB}
+${_NAME_VOLUME_GRAFANA}
+
+wanna continue (y/n)?"
+read x
+if [[ "$x" = "y" ]]
+then
+docker volume rm \
+${_NAME_VOLUME_JMETER_LOGS} \
+${_NAME_VOLUME_JMETER_CONF} \
+${_NAME_VOLUME_JMETER_REPORTS} \
+${_NAME_VOLUME_INFLUXDB} \
+${_NAME_VOLUME_GRAFANA}
+
+fi
+
+
+
+}
+
+main "$@"

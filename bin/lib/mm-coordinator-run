@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o xtrace
+
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+main(){
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source functions
+source ../.versions
+source ../.defaults
+
+docker run -d \
+--name=${_NAME_LEADER_INFLUXDB_CONTAINER} \
+-v ${_NAME_VOLUME_INFLUXDB}:/var/lib/influxdb \
+-p 8086:8086 \
+influxdb:${_INFLUXDB_VERSION}
+
+docker run -d \
+--name=${_NAME_LEADER_GRAFANA_CONTAINER} \
+-p=${_GRAFANA_PORT}:3000 \
+--link=${_NAME_LEADER_INFLUXDB_CONTAINER} \
+-v ${_NAME_VOLUME_GRAFANA}:/var/lib/grafana \
+grafana/grafana:${_GRAFANA_VERSION}
+
+docker run -d \
+--name=${_NAME_LEADER_NGINX_CONTAINER} \
+-p=${_NGINX_PORT}:80 \
+--link="${_NAME_LEADER_INFLUXDB_CONTAINER}" \
+--link ${_NAME_LEADER_GRAFANA_CONTAINER} \
+-v "${_NAME_VOLUME_JMETER_REPORTS}":/var/lib/mighty-meter/reports:ro \
+-v "${_NAME_VOLUME_JMETER_LOGS}":/var/lib/mighty-meter/logs:ro \
+ "${_NAME_LEADER_NGINX_IMAGE}":${_JIG_VERSION} nginx -g 'daemon off;'
+
+}
+main "$@"
+

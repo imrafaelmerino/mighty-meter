@@ -1,0 +1,2112 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "explore",
+    "url": "/d/HIbXcUa4k/explore",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2023-03-16T16:38:37Z",
+    "updated": "2023-03-16T21:21:48Z",
+    "updatedBy": "admin",
+    "createdBy": "admin",
+    "version": 2,
+    "hasAcl": false,
+    "isFolder": false,
+    "folderId": 0,
+    "folderUid": "",
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": true,
+        "canEdit": true,
+        "canDelete": true
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    },
+    "publicDashboardAccessToken": "",
+    "publicDashboardUid": "",
+    "publicDashboardEnabled": false
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "name": "mighty-meter",
+            "type": "influxdb"
+          },
+          "enable": true,
+          "hide": false,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "limit": 100,
+          "name": "Start/stop marker",
+          "query": "select text from events where $timeFilter",
+          "showIn": 0,
+          "target": {
+            "fromAnnotations": true,
+            "name": "Start/stop marker",
+            "query": "select text from events where $timeFilter",
+            "queryType": "tags",
+            "tagsColumn": "",
+            "textColumn": "",
+            "timeEndColumn": "",
+            "titleColumn": ""
+          },
+          "textColumn": "",
+          "type": "dashboard"
+        },
+        {
+          "datasource": {
+            "name": "mighty-meter",
+            "type": "influxdb"
+          },
+          "enable": true,
+          "iconColor": "red",
+          "name": "New annotation"
+        }
+      ]
+    },
+    "description": "Monitor your Apache JMeter load test in real time with InfluxDB and Grafana.\r\nGet overall summary, errors details and particular transaction response times.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "gnetId": 5496,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "influxdb",
+          "name": "mighty-meter"
+        },
+        "fieldConfig": {
+          "defaults": {
+          "color": {
+            "fixedColor": "purple",
+            "mode": "fixed"
+          },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+              "type": "color-text"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+          },
+          "unit": "string"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "_time"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 179
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "_value"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 202
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "_start"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 204
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "start"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 169
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "stop"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 176
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 19,
+          "x": 0,
+          "y": 0
+        },
+        "id": 120,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 1,
+          "showHeader": true,
+          "sortBy": [
+            {
+            "desc": false,
+            "displayName": "start"
+            }
+          ]
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: -100y)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"events\" and (r._value =~ /started/ or r._value =~ /ended/) and (r._value =~ /${qtest}/ or r.application =~ /${qtest}/ or r.env =~ /${qtest}/ ))\n|\u003e keep(columns: [\"_value\",\"application\",\"env\",\"duration\",\"users\",\"version\",\"_time\"])\n|\u003e group()\n |\u003e rename(columns: {_time: \"start\", _value: \"event\", duration: \"duration (sg)\"})",
+            "refId": "A"
+          }
+        ],
+        "title": "Events",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "dateFormat": "YYYY-MM-dd HH:mm:ss",
+                  "destinationType": "time",
+                  "targetField": "start"
+                }
+              ],
+              "fields": {}
+            }
+          }
+        ],
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 10
+        },
+        "id": 112,
+        "panels": [],
+        "title": "Stats (all tx)",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "match": "null",
+                  "result": {
+                    "index": 0,
+                    "text": "0"
+                  }
+                },
+                "type": "special"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 5,
+          "x": 0,
+        "y": 11
+        },
+        "id": 126,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "value"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"count\" and  r[\"statut\"] == \"ok\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e aggregateWindow(every: v.windowPeriod, fn: sum)\n  |\u003e sum()",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "success",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-green",
+              "mode": "fixed"
+            },
+            "decimals": 1,
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#d44a3a",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 5,
+          "x": 5,
+          "y": 11
+        },
+        "id": 128,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": false
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "\nfrom(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  =~ /count/ and r[\"transaction\"] == \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_value\",\"_time\",\"_field\"])\n  |\u003e pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |\u003e  reduce(fn: (r, accumulator) =\u003e (\n        {count: r.count + accumulator.count, \n         countError: r.countError + accumulator.countError\n        }\n        ), \n        identity: {count: 0.0, countError: 0.0})\n    |\u003e map(fn: (r) =\u003e ({ r with _value: (r.count / (r.countError + r.count)) }))\n    |\u003e keep(columns: [\"_value\"])\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-orange",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 2,
+          "x": 12,
+          "y": 11
+        },
+        "id": 130,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "max"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"avg\"  and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e mean()\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "avg",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-orange",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 2,
+          "x": 15,
+          "y": 11
+        },
+        "id": 132,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "max"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"min\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e min()\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "min",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "text",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 2,
+          "x": 18,
+          "y": 11
+        },
+        "id": 134,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "max"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"max\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e max()",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "max",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "": {
+                    "color": "#299c46",
+                    "text": "0"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 5,
+          "x": 0,
+          "y": 14
+        },
+        "id": 136,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"count\" and  r[\"statut\"] == \"ko\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e aggregateWindow(every: v.windowPeriod, fn: sum)\n  |\u003e sum()",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "failures",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-red",
+              "mode": "fixed"
+            },
+            "decimals": 1,
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#508642",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 5,
+          "x": 5,
+          "y": 14
+        },
+        "id": 138,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": false
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  =~ /count/ and r[\"transaction\"] == \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_value\",\"_time\",\"_field\"])\n  |\u003e pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |\u003e  reduce(fn: (r, accumulator) =\u003e (\n        {count: r.count + accumulator.count, \n         countError: r.countError + accumulator.countError\n        }\n        ), \n        identity: {count: 0.0, countError: 0.0})\n    |\u003e map(fn: (r) =\u003e ({ r with _value: (r.countError / (r.countError + r.count)) }))\n    |\u003e keep(columns: [\"_value\"])",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 2,
+          "x": 12,
+          "y": 14
+        },
+        "id": 140,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"rb\" and  r[\"transaction\"] == \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e sum()\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "received",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "rgb(31, 120, 193)",
+              "mode": "fixed"
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 2,
+          "x": 15,
+          "y": 14
+        },
+        "id": 142,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {
+            "titleSize": 3
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"sb\" and  r[\"transaction\"] == \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e aggregateWindow(every: v.windowPeriod, fn: sum)\n  |\u003e sum()\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "sent",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "text",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 2,
+          "x": 18,
+          "y": 14
+        },
+        "id": 144,
+        "links": [],
+        "maxDataPoints": 100,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "max"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: v.defaultBucket)\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"] == \"pct99.0\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"_field\",\"_time\",\"_value\"])\n  |\u003e mean()",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "pct99",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-yellow",
+              "mode": "fixed"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 22,
+          "x": 0,
+          "y": 17
+        },
+        "id": 146,
+        "links": [],
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\"  and r[\"transaction\"]  == \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"application\",\"_time\",\"_value\",\"env\",\"version\",\"users\"])\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "throughput (op/s)",
+        "transformations": [],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 22,
+          "x": 0,
+          "y": 24
+        },
+        "id": 148,
+        "links": [],
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"maxAT\" and r[\"transaction\"] == \"internal\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"application\",\"_time\",\"_value\",\"env\",\"version\",\"users\"])\n",
+            "rawQuery": true,
+            "refId": "C",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "users",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 31
+        },
+        "id": 124,
+        "panels": [],
+        "title": "Stats (per tx)",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-yellow",
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                "color": "green"
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 22,
+          "x": 0,
+          "y": 32
+        },
+        "id": 122,
+        "links": [],
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"count\" and r[\"statut\"]  == \"all\" and r[\"transaction\"]  != \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\",\"_time\"])\n  |\u003e group(columns: [\"transaction\"])\n",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          }
+        ],
+        "title": "throughput (op/s)",
+        "transformations": [],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "inspect": false
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                "color": "green"
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 23,
+          "x": 0,
+          "y": 39
+        },
+        "id": 152,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "enablePagination": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 1,
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"avg\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\" and r.application == \"${app}\" and r.env == \"${env}\" and r.version == \"${version}\" and r.test == \"${test}\" and r.duration == \"${duration}\" and r.users == \"${users}\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e mean()\n  |\u003e rename(columns: {_value: \"avg\"})\n  |\u003e group()",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"min\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e min()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"min\"})\n",
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"max\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e max()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"max\"})\n",
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"pct99.0\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e mean()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"avg pct99\"})",
+            "refId": "H"
+          },
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"pct99.0\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e min()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"min pct99\"})",
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"pct99.0\" and r[\"statut\"]  == \"all\" and r[\"transaction\"] != \"all\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e max()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"max pct99\"})\n",
+            "refId": "E"
+          }
+        ],
+        "title": "latency (ms)",
+        "transformations": [
+          {
+            "id": "joinByField",
+            "options": {
+              "byField": "transaction",
+              "mode": "outer"
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "name": "mighty-meter",
+          "type": "influxdb"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+            "fixedColor": "purple",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "inspect": false
+            },
+            "decimals": 0,
+            "mappings": [],
+            "noValue": ".",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                "color": "green"
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "sent"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "decbytes"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "received"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "decbytes"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "transaction"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "tx"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 23,
+          "x": 0,
+          "y": 44
+        },
+        "id": 153,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "enablePagination": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 1,
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "9.4.1",
+        "targets": [
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"sb\" and r[\"statut\"] != \"all\" and r[\"transaction\"] != \"all\")\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e sum()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"sent\"})",
+            "refId": "F"
+          },
+          {
+            "datasource": {
+              "name": "mighty-meter",
+              "type": "influxdb"
+            },
+            "hide": false,
+            "query": "from(bucket: \"mighty-meter\")\n  |\u003e range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |\u003e filter(fn: (r) =\u003e r[\"_measurement\"] == \"statistics\")\n  |\u003e filter(fn: (r) =\u003e r[\"_field\"]  == \"rb\" and r[\"statut\"] != \"all\" )\n  |\u003e keep(columns: [\"transaction\",\"_value\"])\n  |\u003e group(columns: [\"transaction\"])\n  |\u003e sum()\n  |\u003e group()\n  |\u003e rename(columns: {_value: \"received\"})",
+            "refId": "G"
+          }
+        ],
+        "title": "bytes",
+        "transformations": [
+          {
+            "id": "joinByField",
+            "options": {
+              "byField": "transaction",
+              "mode": "outer"
+            }
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "refresh": "",
+    "revision": 1,
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [
+      "jmeter",
+      "influxdb"
+    ],
+    "templating": {
+      "list": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\")\n|\u003e keyValues(keyColumns: [\"application\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "",
+          "multi": false,
+          "name": "app",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\")\n|\u003e keyValues(keyColumns: [\"application\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\")\n|\u003e keyValues(keyColumns: [\"env\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "env",
+          "multi": false,
+          "name": "env",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\")\n|\u003e keyValues(keyColumns: [\"env\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\")\n|\u003e keyValues(keyColumns: [\"version\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "version",
+          "multi": false,
+          "name": "version",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\")\n|\u003e keyValues(keyColumns: [\"version\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.version == \"[[version:raw]]\")\n|\u003e keyValues(keyColumns: [\"test\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "test",
+          "multi": false,
+          "name": "test",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.version == \"[[version:raw]]\")\n|\u003e keyValues(keyColumns: [\"test\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.version == \"[[version:raw]]\" and r.test == \"[[test:raw]]\")\n|\u003e keyValues(keyColumns: [\"duration\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "duration",
+          "multi": false,
+          "name": "duration",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.version == \"[[version:raw]]\" and r.test == \"[[test:raw]]\")\n|\u003e keyValues(keyColumns: [\"duration\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": "ALL",
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "influxdb",
+            "name": "mighty-meter"
+          },
+          "definition": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.version == \"[[version:raw]]\" and r.test == \"[[test:raw]]\" and r.duration == \"[[duration]]\")\n|\u003e keyValues(keyColumns: [\"users\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "hide": 0,
+          "includeAll": false,
+          "label": "users",
+          "multi": false,
+          "name": "users",
+          "options": [],
+          "query": "from(bucket: \"mighty-meter\")\n|\u003e range(start: v.timeRangeStart)\n|\u003e filter(fn: (r) =\u003e r._measurement == \"statistics\" and r.application == \"[[app:raw]]\" and r.env == \"[[env:raw]]\"  and r.version == \"[[version:raw]]\" and r.test == \"[[test:raw]]\" and r.duration == \"[[duration]]\")\n|\u003e keyValues(keyColumns: [\"users\"])\n|\u003e group()\n|\u003e keep(columns: [\"_value\"])",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 5,
+          "tagValuesQuery": "",
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": ".*",
+            "value": ".*"
+          },
+          "hide": 0,
+          "label": "search",
+          "name": "qtest",
+          "options": [
+            {
+              "selected": true,
+              "text": ".*",
+              "value": ".*"
+            }
+          ],
+          "query": ".*",
+          "skipUrlSync": false,
+          "type": "textbox"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30d",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ]
+    },
+    "timezone": "browser",
+    "title": "EXPLORE",
+    "uid": null,
+    "version": 1,
+    "weekStart": ""
+  }
+}

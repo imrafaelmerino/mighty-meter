@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o xtrace
+echo ""
+echo "Executing script:$0 $@"
+echo ""
+
+main() {
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source functions
+source ../.versions
+source ../.defaults
+
+while [ "$1" != "" ]; do
+    case $1 in
+        --worker-host )          shift
+                                EXECUTOR_HOST=$1
+                                ;;
+        --image-name )          shift
+                                IMAGE_NAME=$1
+                                ;;
+        --container-name )      shift
+                                CONTAINER_NAME=$1
+                                ;;
+        --help )                usage
+                                exit
+                                ;;
+        * )                     unknown_argument $1
+                                exit 1
+    esac
+    shift
+done
+
+
+if [[ -z $IMAGE_NAME ]]
+    then
+      assertNotEmpty "_NAME_WORKER_SERVER_IMAGE is missing in .defaults file." ${_NAME_WORKER_SERVER_IMAGE}
+      IMAGE_NAME="${_NAME_WORKER_SERVER_IMAGE}:${_JIG_VERSION}"
+fi
+
+if [[ -z $CONTAINER_NAME ]]
+    then
+      assertNotEmpty "_NAME_WORKER_SERVER_CONTAINER is missing in .defaults file." ${_NAME_WORKER_SERVER_CONTAINER}
+      CONTAINER_NAME="${_NAME_WORKER_SERVER_CONTAINER}"
+fi
+
+assertNotEmpty "--worker-host is required" ${EXECUTOR_HOST}
+assertNotEmpty "_RMI_REGISTRY_PORT is missing in .defaults file" ${_RMI_REGISTRY_PORT}
+assertNotEmpty "_RMI_SERVER_PORT is missing in .defaults file" ${_RMI_SERVER_PORT}
+assertNotEmpty "_NAME_WORKER_SERVER_CONTAINER is missing in .defaults file" ${_NAME_WORKER_SERVER_CONTAINER}
+assertNotEmpty "_NAME_VOLUME_JMETER_LOGS is missing in .defaults file" ${_NAME_VOLUME_JMETER_LOGS}
+assertNotEmpty "_PATH_VOLUME_JMETER_LOGS is missing in .defaults file" ${_PATH_VOLUME_JMETER_LOGS}
+
+
+ENTRYPOINT_ARGS="-p ${_RMI_REGISTRY_PORT} -l ${_RMI_SERVER_PORT} -r ${EXECUTOR_HOST}"
+
+docker run -d --rm \
+--name="${CONTAINER_NAME}" \
+-p ${_RMI_REGISTRY_PORT}:${_RMI_REGISTRY_PORT} \
+-p ${_RMI_SERVER_PORT}:${_RMI_SERVER_PORT} \
+-v ${_NAME_VOLUME_JMETER_LOGS}:${_PATH_VOLUME_JMETER_LOGS} \
+${IMAGE_NAME} ${ENTRYPOINT_ARGS}
+}
+
+usage(){
+echo "$0 --worker-host HOST --image-name IMAGE_NAME --container-name CONTAINER_NAME"
+echo "--image-name is optional. The default value is the defined in .defaults in _NAME_WORKER_SERVER_IMAGE, which value is ${_NAME_WORKER_SERVER_IMAGE}"
+echo "--container-name is optional. The default value is the defined in .defaults in _NAME_WORKER_SERVER_CONTAINER, which value is ${_NAME_SLAVE_SERVER_CONTAINER}"
+}
+
+unknown_argument(){
+echo "unknown argument: $1"
+usage
+}
+
+
+main "$@"
+

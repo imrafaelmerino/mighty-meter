@@ -1,4 +1,3 @@
-
 ![Logo](./image/mightymeter_banner.png)
 
 # MightyMeter
@@ -20,8 +19,8 @@
 
 MightyMeter (based on InfluxDB, Grafana and JMeter) is a tool that simplifies functional load
 testing and performance measurement with [JMeter](https://jmeter.apache.org/). MightyMeter provides
-quick and easy setup of a group of JMeter servers with one central **Leader** node (aka master) managing multiple
-**Worker** nodes (aka slaves).
+quick and easy setup of a group of JMeter servers with one central **Leader** node (aka master)
+managing multiple **Worker** nodes (aka slaves).
 
 The Leader sends the test configuration to each Worker. As the test runs, Workers send their results
 to the Leader, which stores them in an [InfluxDB](https://www.influxdata.com/) database. MightyMeter
@@ -83,10 +82,16 @@ Worker share a machine, they share the `mm-jmeter-logs` volume.
 ## <a name="jmx-config"></a> Configuring Your JMX File
 
 To persist results in InfluxDB and enable real-time monitoring in Grafana, include the MightyMeter
-listener in your JMX file, as shown in [example.jmx](examples/example.jmx). Only modify:
+listener in your JMX file, as shown in the jmx file [example.jmx](examples/example.jmx).
+
+Here's how it looks in the JMeter GUI if you open the file:
+
+![GUI](./image/gui-mighty-meter-listener.png)
+
+**Only** modify:
 
 - **eventTags** variable: set to your chosen value (will appear in the InfluxDB `events` and
-  `statistics`).
+  `statistics` measurements).
 - Add custom tags in the format `TAG_name=value`.
 
 ## <a name="running-tests"></a> Running Tests
@@ -111,7 +116,7 @@ mm.leader.host$ mm-leader-run-tests \
 ### Options:
 
 - **duration**: test duration in seconds.
-- **num-threads**: threads per Worker (total = num-threads * Worker count).
+- **num-threads**: threads per Worker (total = num-threads \* Worker count).
 - **ramp-up**: ramp-up time for threads in seconds.
 - **leader-host**: hostname of the Leader.
 - **worker-hosts**: comma-separated Worker hostnames.
@@ -127,8 +132,10 @@ login: `admin/admin`).
 
 ## <a name="grafana-dashboards"></a> Grafana Dashboards
 
-MightyMeter provides dashboards for real-time and historical data. You can compare tests by app
-version, number of users, and more.
+MightyMeter provides dashboards for real-time and historical data:
+
+![GUI](./image/grafana_dashboards.png) ![GUI](./image/grafana_compare_versions.png)
+![GUI](./image/grafana_compare_users.png)
 
 ## <a name="querying-db"></a> Querying the Database
 
@@ -142,15 +149,18 @@ Example:
 ```shell
 mm.leader.host$ mm-leader-influxdb-console
 
-> use mm
+> show DATABASES;
+> use "mighty-meter";
 > select * from events
 > select * from statistics
+> quit
 ```
 
 ## <a name="local-install"></a> Local Installation
 
-MightyMeter can run on a local machine. Use the machine's IP address instead of "localhost" for
-`worker-hosts` and `leader-host` variables.
+MightyMeter can run on a local machine for testing purposes (for distributed testing workers and
+leader should be installed in different machines) Use the machine's IP address instead of
+"localhost" for `worker-hosts` and `leader-host` variables.
 
 ## <a name="config-options"></a> Configuration Options
 
@@ -190,4 +200,3 @@ Typical issues:
 ![Error Communication JMeter](./image/error_comunication_jmeters.png)
 
 ---
-

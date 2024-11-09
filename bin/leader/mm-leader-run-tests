@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-set -e
-#set -o pipefail
-#set -o xtrace
-
 echo ""
 echo "Executing script: $0 $@"
 echo ""

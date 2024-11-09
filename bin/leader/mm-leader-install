@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-#set -o errexit
-#set -o pipefail
-#set -o nounset
+set -o errexit
+
 
 echo ""
 echo "Executing script: $0 $@"
@@ -10,13 +9,21 @@ echo ""
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$DIR/../lib/mm-leader-build
+if ! $DIR/../lib/mm-leader-build; then
+   exit 1
+fi
 
-$DIR/../lib/mm-leader-run
+if ! $DIR/../lib/mm-leader-run; then
+   exit 1
+fi
 
-$DIR/../lib/mm-leader-init-metrics-db
+if ! $DIR/../lib/mm-leader-init-metrics-db; then
+   exit 1
+fi
 
-$DIR/../lib/mm-leader-init-dashboards
+if ! $DIR/../lib/mm-leader-init-dashboards; then
+   exit 1
+fi
 
 }
 

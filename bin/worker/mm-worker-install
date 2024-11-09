@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-#set -o errexit
-#set -o pipefail
-#set -o nounset
+set -o errexit
 
 echo ""
 echo "Executing script: $0 $@"
@@ -38,7 +36,10 @@ echo "$0 --host HOST"
 
 assertNotEmpty "Host required" ${HOST}
 
-$DIR/../lib/mm-worker-build
+ # Run build script and check for success
+if ! $DIR/../lib/mm-worker-build; then
+   exit 1
+fi
 
 $DIR/../lib/mm-worker-run --worker-host ${HOST}
 

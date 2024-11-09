@@ -1,11 +1,13 @@
-FROM openjdk:21-oraclelinux8
-ARG JMETER_DOWNLOAD_URL
+ARG JMETER_OPEN_JDK_VERSION
+FROM openjdk:${JMETER_OPEN_JDK_VERSION}
 
+ARG JMETER_DOWNLOAD_URL
 RUN mkdir -p /tmp/dependencies
 RUN curl -L ${JMETER_DOWNLOAD_URL} > /tmp/dependencies/apache-jmeter.tgz
 RUN mkdir -p /opt
 RUN tar -xzf /tmp/dependencies/apache-jmeter.tgz -C /opt && mv /opt/apache-jmeter* /opt/apache-jmeter
 RUN rm -rf /tmp/dependencies
+
 COPY ext-libraries/* /opt/apache-jmeter/lib/ext/
 COPY lib-libraries/* /opt/apache-jmeter/lib/
 

@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-#set -o errexit
-#set -o pipefail
-#set -o nounset
-#set -o xtrace
+set -o errexit
 echo ""
 echo "Executing script: $0 $@"
 echo ""
@@ -18,20 +15,24 @@ assertNotEmpty "_MIGHTY_METER_VERSION variable should be defined in .versions fi
 assertNotEmpty "_JMETER_VERSION variable should be defined in .versions file" ${_JMETER_VERSION}
 assertNotEmpty "_NAME_WORKER_SERVER_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_NGINX_IMAGE}
 assertNotEmpty "_PATH_VOLUME_JMETER_LOGS variable should be defined in .defaults file" ${_PATH_VOLUME_JMETER_LOGS}
+assertNotEmpty "_JMETER_OPEN_JDK_VERSION variable should be defined in .defaults file" ${_JMETER_OPEN_JDK_VERSION}
 
 
 JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${_JMETER_VERSION}.tgz"
 
 echo ${JMETER_URL}
-echo "Building jmeter image..."
+echo "Building mighty-jmeter image..."
 docker build -t mighty-jmeter:${_MIGHTY_METER_VERSION} \
 --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} \
-${DIR}/../../mighty-jmeter
+--build-arg JMETER_OPEN_JDK_VERSION=${_JMETER_OPEN_JDK_VERSION} \
+${DIR}/../../mighty-jmeter || error_exit "Failed to build mighty-jmeter image"
 
-echo "Building mm-worker image..."
+
+echo "Building mighty-worker image..."
 docker build -t ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
-${DIR}/../../worker
+--build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
+${DIR}/../../worker || error_exit "Failed to build mighty-worker image"
 
 }
 

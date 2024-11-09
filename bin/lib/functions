@@ -8,6 +8,12 @@ assertNotEmpty () {
   fi
 }
 
+# Error handler function
+error_exit() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
 
 
 

@@ -10,7 +10,6 @@
 - [Running Tests](#running-tests)
 - [Grafana Dashboards](#grafana-dashboards)
 - [Querying the Database](#querying-db)
-- [Local Installation](#local-install)
 - [Configuration Options](#config-options)
 - [Additional Commands](#additional-commands)
 - [Common Issues](#common-issues)
@@ -195,12 +194,6 @@ mm.leader.host$ mm-leader-influxdb-console
 
 ```
 
-## <a name="local-install"></a> Local Installation
-
-MightyMeter can run on a local machine for testing purposes (for distributed testing workers and
-leader should be installed in different machines) Use the machine's IP address instead of
-"localhost" for `worker-hosts` and `leader-host` variables.
-
 ## <a name="config-options"></a> Configuration Options
 
 Change ports in the **.defaults** file or specify alternative versions in the **.versions** file.
@@ -223,19 +216,5 @@ Change ports in the **.defaults** file or specify alternative versions in the **
   mm.leader.host$ cd bin/leader
   mm.leader.host$ mm-leader-stop-test
   ```
-
-## <a name="common-issues"></a> Common Issues
-
-Check JMeter logs in Docker volumes. Leader logs are accessible via web at
-`https://localhost/mm/logs/`.
-
-Typical issues:
-
-- **Empty Reports**: If no report is generated, and data isn’t saved in InfluxDB or Grafana, check
-  the JMX file’s InfluxDB listener. If needed, remove it and see if HTML report generation works.
-- **Communication Issues**: Ensure all instances are on the same network, and ports are within the
-  valid range.
-
-![Error Communication JMeter](./image/error_comunication_jmeters.png)
 
 ---

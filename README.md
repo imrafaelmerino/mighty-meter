@@ -17,25 +17,57 @@
 
 ## <a name="intro"></a> Introduction
 
-MightyMeter (based on InfluxDB, Grafana and JMeter) is a tool that simplifies functional load
-testing and performance measurement with [JMeter](https://jmeter.apache.org/). MightyMeter provides
-quick and easy setup of a group of JMeter servers with one central **Leader** node (aka master)
-managing multiple **Worker** nodes (aka slaves).
+MightyMeter is a powerful performance testing solution that leverages
+[InfluxDB](https://www.influxdata.com/), [Grafana](https://grafana.com/), and
+[JMeter](https://jmeter.apache.org/) to support both local and distributed testing modes. Here’s a
+closer look at its two operational modes:
 
-The Leader sends the test configuration to each Worker. As the test runs, Workers send their results
-to the Leader, which stores them in an [InfluxDB](https://www.influxdata.com/) database. MightyMeter
-enables real-time monitoring of tests through a [Grafana](https://grafana.com/) dashboard that
-visualizes statistics from the InfluxDB database. Additional dashboards allow for comparing tests by
-application version, user count, etc.
+### 1. Local CLI Mode
 
-Reports are stored in text and HTML formats, with an APDEX (Application Performance Index) report
-accessible via an HTTP server ([NGinx](https://www.nginx.com/)).
+In local testing, it’s recommended to run JMeter in CLI (Command Line Interface) mode instead of the
+GUI. The CLI mode is more efficient for executing tests and conserving resources, which makes it
+ideal for performance evaluation. While JMeter’s GUI mode is highly useful for creating and
+modifying `.jmx` test files, the CLI mode ensures stable, reliable execution when running actual
+tests.
+
+### 2. Distributed Testing Mode
+
+MightyMeter facilitates a straightforward setup for distributed testing with multiple JMeter
+servers. In this configuration, a central **Leader** node (or master node) coordinates multiple
+**Worker** nodes (or slave nodes). The Leader node distributes the test configurations to each
+Worker, and as the test runs, each Worker sends its results back to the Leader. This mode is
+particularly valuable for large-scale tests and scenarios requiring load generation from multiple
+locations or servers.
+
+### Key Features in Both Modes:
+
+- **Result Persistence:** Test results are stored in an InfluxDB database, providing a durable and
+  structured record of performance metrics.
+- **Real-Time Monitoring and Visualization:** MightyMeter integrates with Grafana dashboards to
+  enable real-time test monitoring. These visualizations pull data from InfluxDB and provide
+  insights into various test statistics. Additional dashboards allow you to compare metrics across
+  different application versions, user loads, and other test conditions.
+- **Comprehensive Reporting:** Test reports are generated in both text and HTML formats and include
+  APDEX (Application Performance Index) ratings. Reports are accessible via an HTTP server powered
+  by [NGinx](https://www.nginx.com/), making it easy to review and share performance summaries.
+
+In summary, MightyMeter offers a flexible testing environment suited to both local and distributed
+load testing needs, with robust support for result persistence, real-time insights, and detailed
+reporting.
 
 ## <a name="req"></a> Requirements
 
+To set up the system, ensure you have the following:
+
 - Docker
-- The latest version of MightyMeter (download from GitHub)
-- Execution permissions for scripts in the `bin` folder
+- The latest version of MightyMeter (download the latest release from GitHub)
+- Extract the downloaded file and grant execution permissions for the scripts in the `bin` folder
+- It’s recommended to add the following paths to your shell’s environment `PATH` variable:
+
+```shell
+MIGHTY_METER_HOME="PATH_TO_HOME"
+export PATH="$MIGHTY_METER_HOME/bin/leader:$MIGHTY_METER_HOME/bin/worker:$PATH"
+```
 
 ## <a name="leader-install"></a> Installation of the Leader
 
@@ -66,10 +98,16 @@ The following Docker volumes are created:
 
 Inspect all volumes with `mm-leader-inspect-vol`.
 
+**You are now ready to use MightyMeter in CLI mode from your local machine!** Check out
+[this example](examples/run-local-cli-mode-testing-example.sh) in the [examples](examples) folder to
+get started.
+
 ## <a name="worker-install"></a> Installation of the Workers
 
-For each **Worker** machine with hostnames like **mm.worker.host1**, **mm.worker.host2**, download
-MightyMeter and run the following on each Worker:
+To set up distributed testing, first install the **Leader** on a designated machine. Next, install
+MightyMeter on each **Worker** machine. For example, on each **Worker** machine with hostnames such
+as **mm.worker.host1**, **mm.worker.host2**, download MightyMeter and execute the following command
+on each Worker:
 
 ```shell
 mm.worker.host1$ cd bin/worker
@@ -149,8 +187,8 @@ Example:
 ```shell
 mm.leader.host$ mm-leader-influxdb-console
 
-> show DATABASES;
-> use "mighty-meter";
+> show DATABASES
+> use "mighty-meter"
 > select * from events
 > select * from statistics
 > quit

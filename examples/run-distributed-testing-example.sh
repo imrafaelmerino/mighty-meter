@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #this set up is for running MightyMeter in your local machine
 #for this scenario, use your IP instead of a host name for both the leader
 #and worker

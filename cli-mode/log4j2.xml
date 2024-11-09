@@ -1,0 +1,24 @@
+<Configuration status="WARN" packages="org.apache.jmeter.gui.logging">
+  <Appenders>
+    <RollingRandomAccessFile name="leader-appender" fileName="/var/log/jmeter/jmeter-leader.log"
+      filePattern="/var/log/jmeter/$${date:yyyy-MM-dd}/jmeter-leader-%d{yyyy-MM-dd-HH-mm-ss}-%i.log.gz"
+      append="true">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="1000 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="100"/>
+    </RollingRandomAccessFile>
+    <Async name="Async">
+      <AppenderRef ref="leader-appender"/>
+    </Async>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Async"/>
+    </Root>
+  </Loggers>
+</Configuration>

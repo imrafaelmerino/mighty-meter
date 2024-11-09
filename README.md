@@ -99,7 +99,7 @@ Here's how it looks in the JMeter GUI if you open the file:
 To start a test from the Leader, run `mm-leader-run-tests` with options like:
 
 ```shell
-mm.leader.host$ mm-leader-run-tests \
+mm.leader.host$ mm-cli-mode-run-tests \
 --duration 3600 \
 --num-threads 20 \
 --ramp-up 60 \
@@ -154,6 +154,7 @@ mm.leader.host$ mm-leader-influxdb-console
 > select * from events
 > select * from statistics
 > quit
+
 ```
 
 ## <a name="local-install"></a> Local Installation

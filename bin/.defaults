@@ -20,9 +20,11 @@ _NAME_LEADER_GRAFANA_CONTAINER=mm-leader-grafana
 _NAME_LEADER_INFLUXDB_CONTAINER=mm-leader-metrics-database
 _NAME_LEADER_NGINX_CONTAINER=mm-leader-http-server
 _NAME_WORKER_SERVER_CONTAINER=mm-worker-server
-_NAME_LEADER_JMETER_START_TESTS_CONTAINER=mm-leader-testing
+_NAME_LEADER_JMETER_START_TESTS_CONTAINER=mm-leader-run-tests
+_NAME_LOCAL_CLI_MODE_JMETER_START_TESTS_CONTAINER=mm-local-cli-mode-run-tests
 
-_NAME_LEADER_JMETER_START_TESTS_IMAGE=mighty-meter/leader/runtests
+_NAME_LEADER_JMETER_START_TESTS_IMAGE=mighty-meter/leader-distributed/run-tests
+_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE=mighty-meter/local-cli-mode/run-tests
 _NAME_LEADER_GRAFANA_IMAGE=mighty-meter/leader/grafana
 _NAME_LEADER_INFLUXDB_IMAGE=mighty-meter/leader/influxdb
 _NAME_LEADER_NGINX_IMAGE=mighty-meter/leader/nginx

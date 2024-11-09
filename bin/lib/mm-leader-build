@@ -17,7 +17,7 @@ assertNotEmpty "_MIGHTY_METER_VERSION variable should be defined in .versions fi
 assertNotEmpty "_JMETER_VERSION variable should be defined in .versions file" ${_JMETER_VERSION}
 assertNotEmpty "_NAME_LEADER_NGINX_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_NGINX_IMAGE}
 assertNotEmpty "_NAME_LEADER_JMETER_START_TESTS_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}
-
+assertNotEmpty "_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}
 assertNotEmpty "_PATH_VOLUME_JMETER_CONF variable should be defined in .defaults file" ${_PATH_VOLUME_JMETER_CONF}
 assertNotEmpty "_PATH_VOLUME_JMETER_LOGS variable should be defined in .defaults file" ${_PATH_VOLUME_JMETER_LOGS}
 assertNotEmpty "_PATH_VOLUME_JMETER_REPORTS variable should be defined in .defaults file" ${_PATH_VOLUME_JMETER_REPORTS}
@@ -38,7 +38,7 @@ docker build -t ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg NGINX_VERSION=${_NGINX_VERSION} \
 "$DIR"/../../leader/nginx/
 
-echo "Building leader image..."
+echo "Building leader image for running distributed tests..."
 
 docker build -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
@@ -46,6 +46,15 @@ docker build -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION
 --build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
 --build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
 "$DIR"/../../leader/
+
+echo "Building leader image for running local-cli-mode tests..."
+
+docker build -t ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
+--build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
+--build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
+--build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
+--build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
+"$DIR"/../../cli-mode/
 
 }
 

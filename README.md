@@ -70,8 +70,7 @@ export PATH="$MIGHTY_METER_HOME/bin/leader:$MIGHTY_METER_HOME/bin/worker:$PATH"
 
 ## <a name="leader-install"></a> Installation of the Leader
 
-For the machine intended as the **Leader**, with the hostname **mm.leader.host**, and MightyMeter
-downloaded, run the following commands:
+For the machine intended as the **Leader** and MightyMeter downloaded, run the following commands:
 
 ```shell
 mm.leader.host$ cd bin/leader

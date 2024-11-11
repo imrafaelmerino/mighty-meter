@@ -80,10 +80,10 @@ mm.leader.host$ mm-leader-install
 
 Services on the Leader will be set up as follows:
 
-- **Nginx** listening on port 80
-- **Grafana** at http://localhost:80/grafana (configured as a reverse proxy on Nginx)
-- **InfluxDB** running on a container. See this [Querying the Database](#querying-db) for opening the CLI
-- Jmeter leader containers are created only when starting a test, and are destroyed when the test finishes
+- **Nginx** is listening on port 80.
+- **Grafana** is accessible at [http://localhost:80/grafana](http://localhost:80/grafana) (set up as a reverse proxy through Nginx).
+- **InfluxDB** is running in a container. Refer to [Querying the Database](#querying-db) for instructions on opening the CLI.
+- JMeter leader containers are created at the start of a test and removed once the test is complete.
 
 Port can be customized via the variable `_NGINX_PORT`
 in the [`.defaults`](bin/.defaults) file. Component versions are specified in the [`.versions`](bin/.versions) 

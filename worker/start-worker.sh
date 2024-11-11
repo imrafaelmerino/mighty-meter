@@ -18,7 +18,7 @@ if [[ ( $1 == "") ]]
     display_usage
     exit 0
 fi
-echo "Executing script: $0 $@"
+echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
 echo ""
 while getopts p:c:h:r:l: option
 do

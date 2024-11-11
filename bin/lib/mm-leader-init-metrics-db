@@ -2,12 +2,13 @@
 set -o errexit
 
 echo ""
-echo "Executing script: $0 $@"
+echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
 echo ""
 
 main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/functions
 source ${DIR}/../.defaults
 
@@ -20,6 +21,10 @@ docker exec -it ${_NAME_LEADER_INFLUXDB_CONTAINER} bash -c \
 --org=${_INFLUXDB_ORG} \
 --username=${_INFLUXDB_USERNAME} \
 --password=${_INFLUXDB_PASSWORD} --force"
+
+if [ $? -ne 0 ]; then
+    error_exit "Error creating INFLUXDB container"
+fi
 }
 
 main "$@"

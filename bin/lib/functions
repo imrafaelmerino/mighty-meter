@@ -10,8 +10,12 @@ assertNotEmpty () {
 
 # Error handler function
 error_exit() {
-    echo "Error: $1" >&2
+    echo "(MIGHTY-METER-INSTALLER) | ERROR | $1" >&2
     exit 1
+}
+
+print_message() {
+   echo "(MIGHTY-METER-INSTALLER) | $1"
 }
 
 

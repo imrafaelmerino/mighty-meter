@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
 echo ""
-echo "Executing script: $0 $@"
+echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
 echo ""
 
 main(){
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/functions
 source ${DIR}/../.versions
 source ${DIR}/../.defaults
@@ -15,15 +16,22 @@ source ${DIR}/../.defaults
 docker run -d \
 --name=${_NAME_LEADER_INFLUXDB_CONTAINER} \
 -v ${_NAME_VOLUME_INFLUXDB}:/var/lib/influxdb \
--p 8086:8086 \
 influxdb:${_INFLUXDB_VERSION}
+
+if [ $? -ne 0 ]; then
+    error_exit "Error creating InfluxDB container with `docker run` command"
+fi
 
 docker run -d \
 --name=${_NAME_LEADER_GRAFANA_CONTAINER} \
--p=${_GRAFANA_PORT}:3000 \
 --link=${_NAME_LEADER_INFLUXDB_CONTAINER} \
 -v ${_NAME_VOLUME_GRAFANA}:/var/lib/grafana \
+-v ${DIR}/../../leader/grafana/grafana.ini:/etc/grafana/grafana.ini \
 grafana/grafana:${_GRAFANA_VERSION}
+
+if [ $? -ne 0 ]; then
+    error_exit "Error creating Grafana container with `docker run` command"
+fi
 
 docker run -d \
 --name=${_NAME_LEADER_NGINX_CONTAINER} \
@@ -32,7 +40,13 @@ docker run -d \
 --link ${_NAME_LEADER_GRAFANA_CONTAINER} \
 -v "${_NAME_VOLUME_JMETER_REPORTS}":/var/lib/mighty-meter/reports:ro \
 -v "${_NAME_VOLUME_JMETER_LOGS}":/var/lib/mighty-meter/logs:ro \
- "${_NAME_LEADER_NGINX_IMAGE}":${_MIGHTY_METER_VERSION} nginx -g 'daemon off;'
+-e _NAME_LEADER_GRAFANA_CONTAINER=${_NAME_LEADER_GRAFANA_CONTAINER} \
+"${_NAME_LEADER_NGINX_IMAGE}":${_MIGHTY_METER_VERSION} \
+/bin/sh -c "envsubst '\$_NAME_LEADER_GRAFANA_CONTAINER' < /tmp/nginx.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
+if [ $? -ne 0 ]; then
+    error_exit "Error creating Grafana container with `docker run` command"
+fi
 
 }
 main "$@"

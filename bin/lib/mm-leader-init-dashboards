@@ -2,18 +2,22 @@
 set -o errexit
 
 echo ""
-echo "Executing script: $0 $@"
+echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
 echo ""
 
 main(){
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/functions
 source ${DIR}/../.versions
 source ${DIR}/../.defaults
 
 sleep 5
 
-curl \
+print_message "creating INFLUXDB DATASOURCE using GRAFANA API"
+
+curl -isS \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
@@ -30,6 +34,9 @@ curl \
   "secureJsonData": { "token" : "'${_INFLUXDB_TOKEN}'"}
 }'
 
+if [ $? -ne 0 ]; then
+    error_exit "Error creating INFLUXDB DATASOURCE using GRAFANA API"
+fi
 
 DASHBOARD_PAYLOAD_REALTIME="$DIR"/../../leader/dashboards/realtime.json
 DASHBOARD_PAYLOAD_EXPLORE="$DIR"/../../leader/dashboards/explore.json
@@ -37,7 +44,9 @@ DASHBOARD_PAYLOAD_COMP_BY_VERSION="$DIR"/../../leader/dashboards/compare_by_vers
 DASHBOARD_PAYLOAD_COMP_BY_USERS="$DIR"/../../leader/dashboards/compare_by_users.json
 DASHBOARD_PAYLOAD_COMP_BY_TEST="$DIR"/../../leader/dashboards/compare_by_test.json
 
-curl \
+print_message "creating REALTIME dashboard with GRAFANA API"
+
+curl -isS \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
@@ -46,7 +55,13 @@ curl \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_REALTIME}
 
-curl \
+if [ $? -ne 0 ]; then
+    error_exit "Error creating REALTIME dashboard with GRAFANA API"
+fi
+
+print_message "creating EXPLORING dashboard with GRAFANA API"
+
+curl -isS \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
@@ -55,7 +70,13 @@ curl \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_EXPLORE}
 
-curl \
+if [ $? -ne 0 ]; then
+    error_exit "Error creating EXPLORING dashboard with GRAFANA API"
+fi
+
+print_message "creating COMPARE_BY_TEST dashboard with GRAFANA API"
+
+curl -isS \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
@@ -64,7 +85,13 @@ curl \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_TEST}
 
-curl \
+if [ $? -ne 0 ]; then
+    error_exit "Error creating COMPARE_BY_TEST dashboard with GRAFANA API"
+fi
+
+print_message "creating COMPARE_BY_VERSION dashboard with GRAFANA API"
+
+curl -isS \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
@@ -73,7 +100,13 @@ curl \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_VERSION}
 
-curl \
+if [ $? -ne 0 ]; then
+    error_exit "Error creating COMPARE_BY_VERSION dashboard with GRAFANA API"
+fi
+
+print_message "creating COMPARE_BY_USERS dashboard with GRAFANA API"
+
+curl -isS \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
@@ -81,6 +114,10 @@ curl \
 --retry-max-time 60 \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_USERS}
+
+if [ $? -ne 0 ]; then
+    error_exit "Error creating COMPARE_BY_USERS dashboard with GRAFANA API"
+fi
 
 }
 

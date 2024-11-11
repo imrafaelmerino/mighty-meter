@@ -3,7 +3,7 @@
 set -e
 #set -o pipefail
 echo ""
-echo "Executing script: $0 $@"
+echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
 echo ""
 
 display_usage() {

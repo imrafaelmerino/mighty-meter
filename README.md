@@ -1,4 +1,6 @@
-![Logo](./image/mightymeter_banner.png)
+<p align="center">
+  <img src="./image/logo.png" alt="Logo" width="300" height="300" />
+</p>
 
 # MightyMeter
 
@@ -73,18 +75,30 @@ export PATH="$MIGHTY_METER_HOME/bin/leader:$MIGHTY_METER_HOME/bin/worker:$PATH"
 For the machine intended as the **Leader** and MightyMeter downloaded, run the following commands:
 
 ```shell
-mm.leader.host$ cd bin/leader
 mm.leader.host$ mm-leader-install
 ```
 
 Services on the Leader will be set up as follows:
 
-- **Nginx** on port 80
-- **Grafana** on port 3000
-- **InfluxDB** on port 8086
+- **Nginx** listening on port 80
+- **Grafana** at http://localhost:80/grafana (configured as a reverse proxy on Nginx)
+- **InfluxDB** running on a container. See this [Querying the Database](#querying-db) for opening the CLI
+- Jmeter leader containers are created only when starting a test, and are destroyed when the test finishes
 
-Ports can be customized via `_NGINX_PORT`, `_GRAFANA_PORT`, and `_INFLUX_DB_PORT` in the `.defaults`
-file. Component versions are specified in `.versions`.
+Port can be customized via the variable `_NGINX_PORT`
+in the [`.defaults`](bin/.defaults) file. Component versions are specified in the [`.versions`](bin/.versions) 
+file:
+
+```shell
+_MIGHTY_METER_VERSION=1.0.0
+_INFLUXDB_VERSION=2.7.10
+_GRAFANA_VERSION=11.3.0
+_NGINX_VERSION=1.27.2
+_JMETER_VERSION=5.6.3
+_JMETER_OPEN_JDK_VERSION=21-oraclelinux8
+```
+
+
 
 The following Docker volumes are created:
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
 echo ""
-echo "Executing script: $0 $@"
+echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
 echo ""
 
 main(){
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source ${DIR}/functions
@@ -25,29 +25,33 @@ assertNotEmpty "_JMETER_OPEN_JDK_VERSION variable should be defined in .defaults
 
 JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${_JMETER_VERSION}.tgz"
 
-echo "Building mighty jmeter image..."
+print_message "Building mighty jmeter image..."
 
 docker build -t mighty-jmeter:${_MIGHTY_METER_VERSION} \
 --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} \
 --build-arg JMETER_OPEN_JDK_VERSION=${_JMETER_OPEN_JDK_VERSION} \
 "$DIR"/../../mighty-jmeter
 
-echo "Building nginx image..."
+print_message "Building NGINX image..."
 
 docker build -t ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg NGINX_VERSION=${_NGINX_VERSION} \
-"$DIR"/../../leader/nginx/
+"$DIR"/../../leader/nginx/ || error_exit "Failed to build NGINX image"
 
-echo "Building leader image for running distributed tests..."
+print_message "Building LEADER image for running distributed tests..."
 
 docker build -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
 --build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
 --build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
 --build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
-"$DIR"/../../leader/
+"$DIR"/../../leader/ || error_exit "Failed to build LEADER image"
 
-echo "Building leader image for running local-cli-mode tests..."
+if [ $? -ne 0 ]; then
+    error_exit "Error creating Grafana Image with `docker build` command"
+fi
+
+print_message "Building LEADER image for running local-cli-mode tests..."
 
 docker build -t ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
@@ -55,6 +59,10 @@ docker build -t ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_MET
 --build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
 --build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
 "$DIR"/../../cli-mode/
+
+if [ $? -ne 0 ]; then
+    error_exit "Error creating Leader JMeter Image with `docker build` command"
+fi
 
 }
 

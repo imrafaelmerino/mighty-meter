@@ -43,9 +43,9 @@ print_message "Starting Grafana container..."
 
 docker run -d \
 --name=${_NAME_LEADER_GRAFANA_CONTAINER} \
--p=${_GRAFANA_PORT}:3000 \
 --link=${_NAME_LEADER_INFLUXDB_CONTAINER} \
 -v ${_NAME_VOLUME_GRAFANA}:/var/lib/grafana \
+-v ${DIR}/../../leader/grafana/grafana.ini:/etc/grafana/grafana.ini \
 ${_NAME_GRAFANA_IMAGE}:${_GRAFANA_VERSION} > /dev/null
 
 if [ $? -ne 0 ]; then

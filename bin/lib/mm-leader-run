@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main(){
 
@@ -13,39 +11,64 @@ source ${DIR}/functions
 source ${DIR}/../.versions
 source ${DIR}/../.defaults
 
+
+print_message "Downloading InfluxDB image..."
+
+docker pull ${_NAME_INFLUXDB_IMAGE}:${_INFLUXDB_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_message "Image downloaded!"
+fi
+
+print_message "Starting InfluxDB container..."
+
 docker run -d \
 --name=${_NAME_LEADER_INFLUXDB_CONTAINER} \
 -v ${_NAME_VOLUME_INFLUXDB}:/var/lib/influxdb \
-influxdb:${_INFLUXDB_VERSION}
+${_NAME_INFLUXDB_IMAGE}:${_INFLUXDB_VERSION} > /dev/null
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating InfluxDB container with `docker run` command"
+    error_exit "Failed to start container."
+else
+    print_message "Container running!"
 fi
+
+print_message "Downloading Grafana image..."
+
+docker pull ${_NAME_GRAFANA_IMAGE}:${_GRAFANA_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_message "Image downloaded!"
+fi
+
+print_message "Starting Grafana container..."
 
 docker run -d \
 --name=${_NAME_LEADER_GRAFANA_CONTAINER} \
+-p=${_GRAFANA_PORT}:3000 \
 --link=${_NAME_LEADER_INFLUXDB_CONTAINER} \
 -v ${_NAME_VOLUME_GRAFANA}:/var/lib/grafana \
--v ${DIR}/../../leader/grafana/grafana.ini:/etc/grafana/grafana.ini \
-grafana/grafana:${_GRAFANA_VERSION}
+${_NAME_GRAFANA_IMAGE}:${_GRAFANA_VERSION} > /dev/null
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating Grafana container with `docker run` command"
+    error_exit "Failed to start container."
+else
+    print_message "Container running!"
 fi
+
+print_message "Starting Nginx container..."
 
 docker run -d \
 --name=${_NAME_LEADER_NGINX_CONTAINER} \
 -p=${_NGINX_PORT}:80 \
---link="${_NAME_LEADER_INFLUXDB_CONTAINER}" \
 --link ${_NAME_LEADER_GRAFANA_CONTAINER} \
 -v "${_NAME_VOLUME_JMETER_REPORTS}":/var/lib/mighty-meter/reports:ro \
 -v "${_NAME_VOLUME_JMETER_LOGS}":/var/lib/mighty-meter/logs:ro \
--e _NAME_LEADER_GRAFANA_CONTAINER=${_NAME_LEADER_GRAFANA_CONTAINER} \
 "${_NAME_LEADER_NGINX_IMAGE}":${_MIGHTY_METER_VERSION} \
-/bin/sh -c "envsubst '\$_NAME_LEADER_GRAFANA_CONTAINER' < /tmp/nginx.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+/bin/sh -c "nginx -g 'daemon off;'" > /dev/null
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating Grafana container with `docker run` command"
+    error_exit "Failed to start container."
+else
+    print_message "Container running!"
 fi
 
 }

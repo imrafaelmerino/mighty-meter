@@ -98,8 +98,6 @@ _JMETER_VERSION=5.6.3
 _JMETER_OPEN_JDK_VERSION=21-oraclelinux8
 ```
 
-
-
 The following Docker volumes are created:
 
 - `mm-jmeter-conf`: stores the JMX and properties files for each test, created at test run.
@@ -122,12 +120,16 @@ as **mm.worker.host1**, **mm.worker.host2**, download MightyMeter and execute th
 on each Worker:
 
 ```shell
-mm.worker.host1$ cd bin/worker
 mm.worker.host1$ mm-worker-install --host mm.worker.host1
 ```
 
-Each Worker will create a Docker volume named `mm-jmeter-logs` for log storage. When a Leader and
-Worker share a machine, they share the `mm-jmeter-logs` volume.
+```shell
+mm.worker.host2$ mm-worker-install --host mm.worker.host2
+```
+
+Each Worker will create a Docker volume named `mm-jmeter-logs` for log storage. 
+
+Don't install the worker nodes on the same machine as the leader—it defeats the purpose. For single-machine setups, use MightyMeter in local CLI mode instead.
 
 ## <a name="jmx-config"></a> Configuring Your JMX File
 
@@ -146,10 +148,12 @@ Here's how it looks in the JMeter GUI if you open the file:
 
 ## <a name="running-tests"></a> Running Tests
 
+### Distributed testing
+
 To start a test from the Leader, run `mm-leader-run-tests` with options like:
 
 ```shell
-mm.leader.host$ mm-cli-mode-run-tests \
+mm.leader.host$ mm-leader-run-tests \
 --duration 3600 \
 --num-threads 20 \
 --ramp-up 60 \
@@ -163,7 +167,7 @@ mm.leader.host$ mm-cli-mode-run-tests \
 --test-name PerformanceTest
 ```
 
-### Options:
+#### Options:
 
 - **duration**: test duration in seconds.
 - **num-threads**: threads per Worker (total = num-threads \* Worker count).
@@ -177,8 +181,37 @@ mm.leader.host$ mm-cli-mode-run-tests \
 - **props-file**: additional properties for JMeter.
 
 This command creates an ephemeral Docker container to start a JMeter client (Leader) and coordinates
-with active Workers. Monitor tests in real-time on Grafana at `http://localhost:3000` (default
+with active Workers. Monitor tests in real-time on Grafana at `http://localhost/grafana` (default
 login: `admin/admin`).
+
+### Local CLI Mode
+
+```shell
+localhost$ mm-cli-mode-run-tests \
+--duration 20 \
+--num-threads 10 \
+--ramp-up 1 \
+--env dev \
+--jmx-file /path/to/jmx-file \
+--props-file /path/to/props-file \
+--app myapp \
+--app-version 1.0.0 \
+--test-name anotherTest
+```
+
+#### Options:
+
+- **duration**: test duration in seconds.
+- **num-threads**: threads per Worker (total = num-threads \* Worker count).
+- **ramp-up**: ramp-up time for threads in seconds.
+- **env**: test environment (used in InfluxDB and Grafana filters).
+- **app**: application name.
+- **app-version**: tested app version.
+- **jmx-file**: JMeter configuration file (with listener included).
+- **props-file**: additional properties for JMeter.
+
+This command creates an ephemeral Docker container to start a JMeter that executes the test.
+Monitor tests in real-time on Grafana at `http://localhost:3000` (default login: `admin/admin`).
 
 ## <a name="grafana-dashboards"></a> Grafana Dashboards
 
@@ -218,15 +251,13 @@ Change ports in the **.defaults** file or specify alternative versions in the **
 - **Access Worker Logs**:
 
   ```shell
-  mm.worker.host1$ cd bin/worker
   mm.worker.host1$ mm-worker-bash
   root@container# tail -f /var/log/jmeter/jmeter-worker.log
   ```
 
-- **Stop a Test**:
+- **Stop a running Test**:
 
   ```shell
-  mm.leader.host$ cd bin/leader
   mm.leader.host$ mm-leader-stop-test
   ```
 

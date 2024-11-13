@@ -1,25 +1,22 @@
 #!/bin/bash
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+##echo "(MIGHTY-METER) | Executing $0 $@"
 
 display_usage() {
   echo -e "OPTIONS:
-
   -a Name of the application under test
   -d Duration of the test in seconds
   -e Environment where the target machine is
-  -f JMeter configuration file *.jmx
+  -f JMeter configuration file (*.jmx)
   -i URL used by JMeter to send metrics of the ongoing test
+  -j JVM Heap options. -Xms512m -Xmx1g by default
+  -k Freq of samples send to Influxdb in seconds
   -n Name of the test
   -o Directory where the result will be stored
+  -p Property file
   -r RAMP-UP period
-  -p Property file that will be send to workers
-  -t Number of threads per worker
-  -j JVM Heap options. -Xms512m -Xmx1g by default
+  -t Number of threads
   -v Version of the application under test
-  -k Freq of samples send to Influxdb in seconds
   "
 }
 
@@ -73,8 +70,6 @@ assertNotEmpty "name test required" ${TEST_NAME}
 assertNotEmpty "number of threads required" ${NUM_OF_THREADS}
 assertNotEmpty "ramp-up period required" ${RAMP_UP_PERIOD}
 
-#set -o nounset
-
 if [[ ! -f ${FILE_JMX} ]]
   then
     echo "file ${FILE_JMX} not found"
@@ -92,31 +87,13 @@ fi
 export HEAP="${HEAP_OPTIONS}"
 
 CONCURRENT_USERS=$NUM_OF_THREADS
-
 DATE=$(date +"%F-%T")
 DATE_FORMATTED="${DATE//:/_}"
 DIR=${VOLUME_REPORTS}/${APP}/${TEST_NAME}/${CONCURRENT_USERS}-cu/${DATE_FORMATTED}
 RESULT_FILE=${DIR}/result.jtl
 REPORT_DIR=${DIR}/report
 
-echo ""
-echo "The following variables have been defined:
-RESULT_FILE=${RESULT_FILE}
-CONCURRENT_USERS=${CONCURRENT_USERS}"
-
-
-var=$( cat ${FILE_PROP} )
-echo ""
-echo "Properties file send to workers:"
-
-echo "${var}"
-
 mkdir -p  ${REPORT_DIR}
-
-echo ""
-echo "Created output directory: ${REPORT_DIR}"
-echo ""
-
 
 CMD="jmeter -n -e \
 -t ${FILE_JMX} \
@@ -142,9 +119,7 @@ CMD="jmeter -n -e \
 -Jasynch.batch.queue.size=10000 \
 -Jbackend_influxdb.send_interval=${FREQ_SAMPLES}"
 
-echo "Starting JMeter(cli mode):
-${CMD}"
-echo ""
+echo "Running the test plan..."
 ${CMD}
 
 #if report is not generated because of an error, remove the directory

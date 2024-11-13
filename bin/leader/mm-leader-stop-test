@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -13,8 +10,11 @@ source "${DIR}"/../.versions
 source "${DIR}"/../.defaults
 source "${DIR}"/../lib/functions
 
+print_message "Stopping running test in container ${_NAME_LEADER_JMETER_START_TESTS_CONTAINER}..."
 docker exec -it ${_NAME_LEADER_JMETER_START_TESTS_CONTAINER} stoptest.sh 4445
-
+if [ $? -eq 0 ]; then
+    print_message  "Test stopped!"
+fi
 }
 
 main "$@"

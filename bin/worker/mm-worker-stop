@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
 
 main() {
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
-docker stop ${_NAME_WORKER_SERVER_CONTAINER}
+
+source ${DIR}/../lib/functions
+
+print_uninstaller_message "Stopping Worker container..."
+
+docker stop ${_NAME_WORKER_SERVER_CONTAINER} > /dev/null &&
+
+print_uninstaller_message "Container stopped!"
+
 }
 
 main "$@"

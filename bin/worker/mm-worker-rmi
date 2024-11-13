@@ -1,15 +1,29 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
 
 main() {
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
+
 source ${DIR}/../.versions
-docker rmi ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION}
+
+source ${DIR}/../lib/functions
+
+print_uninstaller_message "Removing JMeter image..."
+
+docker rmi ${_NAME_WORKER_JMETER_IMAGE}:${_MIGHTY_METER_VERSION} > /dev/null \
+&& print_uninstaller_message "Image removed!"
+
+print_uninstaller_message "Removing Worker image..."
+
+docker rmi ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION} > /dev/null \
+&& print_uninstaller_message "Image removed!"
+
+
 }
 
 main "$@"

@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 if [[ ( $1 == "") ]]
   then
-    echo "This script requires arguments:"
+    print_message "This script requires arguments:"
     display_usage
     exit 1
 fi
@@ -64,7 +62,7 @@ assertNotEmpty "--jmx-file required" ${JMX_FILE}
 
 if [[ ! -f ${JMX_FILE} ]]
   then
-    echo "File ${JMX_FILE} not found"
+    print_message "File ${JMX_FILE} not found"
     display_usage
     exit 1
 fi
@@ -74,7 +72,7 @@ assertNotEmpty "--props-file required" ${PROPS_FILE}
 
 if [[ ! -f ${PROPS_FILE} ]]
   then
-    echo "File ${PROPS_FILE} not found"
+    print_message "File ${PROPS_FILE} not found"
     display_usage
     exit 1
 fi
@@ -125,6 +123,8 @@ ENTRYPOINT_ARGS="\
 
 NAME_CONTAINER="${_NAME_LEADER_JMETER_START_TESTS_CONTAINER}"
 
+print_message "Creating Leader container..."
+
 docker create --rm  \
 -p=${RMI_PORT_1}:${RMI_PORT_1} \
 -p=${RMI_PORT_2}:${RMI_PORT_2} \
@@ -135,14 +135,39 @@ docker create --rm  \
 --link ${_NAME_LEADER_INFLUXDB_CONTAINER} \
 --name ${NAME_CONTAINER} \
 ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
-${ENTRYPOINT_ARGS}
+${ENTRYPOINT_ARGS} > /dev/null
 
+print_message "Container created!"
 
-docker cp ${JMX_FILE} ${NAME_CONTAINER}:/etc/jmeter/conf/jmx/
-docker cp ${PROPS_FILE}  ${NAME_CONTAINER}:/etc/jmeter/conf/props/
+print_message "Copying jmx file into container..."
 
-docker start -a ${NAME_CONTAINER}
+docker cp ${JMX_FILE} ${NAME_CONTAINER}:/etc/jmeter/conf/jmx/ > /dev/null
 
+if [ $? -ne 0 ]; then
+    error_exit "Failed to copy file."
+else
+    print_message "File copied!"
+fi
+
+print_message "Copying properties file into container..."
+
+docker cp ${PROPS_FILE} ${NAME_CONTAINER}:/etc/jmeter/conf/props/ > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to copy properties file."
+else
+    print_message "File copied!"
+fi
+
+print_message "Starting Leader container to coordinate the test... Make sure all the Workers are up and running"
+
+docker start -a ${NAME_CONTAINER} > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to start."
+else
+    print_command "Container removed!"
+fi
 }
 
 display_usage() {

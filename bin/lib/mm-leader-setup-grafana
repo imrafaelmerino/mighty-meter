@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main(){
 
@@ -13,16 +11,22 @@ source ${DIR}/functions
 source ${DIR}/../.versions
 source ${DIR}/../.defaults
 
-sleep 5
+WAITING_TIME=5
 
-print_message "creating INFLUXDB DATASOURCE using GRAFANA API"
+print_message "Setting up Grafana..."
 
-curl -isS \
+print_message "Waiting $WAITING_TIME sec for Grafana container to be started..."
+
+sleep $WAITING_TIME
+
+print_message "Calling Grafana API to create InfluxDB datasource..."
+
+curl -sS -o /dev/null -w "Status Code Http Response: %{http_code}\n" \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
 --retry-max-time 60 \
---url ${_GRAFANA_URL}/datasources \
+--url ${_GRAFANA_API_URL}/datasources \
 --header 'Content-Type: application/json' \
 -d '{
   "name": "mighty-meter",
@@ -35,7 +39,9 @@ curl -isS \
 }'
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating INFLUXDB DATASOURCE using GRAFANA API"
+    error_exit "Failed to call API."
+else
+    print_message "Datasource created!"
 fi
 
 DASHBOARD_PAYLOAD_REALTIME="$DIR"/../../leader/dashboards/realtime.json
@@ -44,79 +50,89 @@ DASHBOARD_PAYLOAD_COMP_BY_VERSION="$DIR"/../../leader/dashboards/compare_by_vers
 DASHBOARD_PAYLOAD_COMP_BY_USERS="$DIR"/../../leader/dashboards/compare_by_users.json
 DASHBOARD_PAYLOAD_COMP_BY_TEST="$DIR"/../../leader/dashboards/compare_by_test.json
 
-print_message "creating REALTIME dashboard with GRAFANA API"
+print_message "Calling Grafana API to create realtime dashboard..."
 
-curl -isS \
+curl -sS -o /dev/null -w "Status Code Http Response: %{http_code}\n" \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
---url ${_GRAFANA_URL}/dashboards/db \
+--url ${_GRAFANA_API_URL}/dashboards/db \
 --retry-max-time 60 \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_REALTIME}
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating REALTIME dashboard with GRAFANA API"
+    error_exit "Failed to call API."
+else
+    print_message "Dashboard created!"
 fi
 
-print_message "creating EXPLORING dashboard with GRAFANA API"
+print_message "Calling Grafana API to create explorer dashboard..."
 
-curl -isS \
+curl -sS -o /dev/null -w "Status Code Http Response: %{http_code}\n" \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
---url ${_GRAFANA_URL}/dashboards/db \
+--url ${_GRAFANA_API_URL}/dashboards/db \
 --retry-max-time 60 \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_EXPLORE}
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating EXPLORING dashboard with GRAFANA API"
+    error_exit "Failed to call API."
+else
+    print_message "Dashboard created!"
 fi
 
-print_message "creating COMPARE_BY_TEST dashboard with GRAFANA API"
+print_message "Calling Grafana API to create Compare-By-Test dashboard..."
 
-curl -isS \
+curl -sS -o /dev/null -w "Status Code Http Response: %{http_code}\n" \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
---url ${_GRAFANA_URL}/dashboards/db \
+--url ${_GRAFANA_API_URL}/dashboards/db \
 --retry-max-time 60 \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_TEST}
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating COMPARE_BY_TEST dashboard with GRAFANA API"
+    error_exit "Failed to call API."
+else
+    print_message "Dashboard created!"
 fi
 
-print_message "creating COMPARE_BY_VERSION dashboard with GRAFANA API"
+print_message "Calling Grafana API to create Compare-By-Version dashboard..."
 
-curl -isS \
+curl -sS -o /dev/null -w "Status Code Http Response: %{http_code}\n" \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
---url ${_GRAFANA_URL}/dashboards/db \
+--url ${_GRAFANA_API_URL}/dashboards/db \
 --retry-max-time 60 \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_VERSION}
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating COMPARE_BY_VERSION dashboard with GRAFANA API"
+    error_exit "Failed to call API."
+else
+    print_message "Dashboard created!"
 fi
 
-print_message "creating COMPARE_BY_USERS dashboard with GRAFANA API"
+print_message "Calling Grafana API to create Compare-By-Users dashboard..."
 
-curl -isS \
+curl -sS -o /dev/null -w "Status Code Http Response: %{http_code}\n" \
 --retry 10 \
 --retry-delay 2 \
 --max-time 10 \
---url ${_GRAFANA_URL}/dashboards/db \
+--url ${_GRAFANA_API_URL}/dashboards/db \
 --retry-max-time 60 \
 --header 'Content-Type: application/json' \
 -d @${DASHBOARD_PAYLOAD_COMP_BY_USERS}
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating COMPARE_BY_USERS dashboard with GRAFANA API"
+    error_exit "Failed to call API."
+else
+    print_message "Dashboard created!"
 fi
 
 }

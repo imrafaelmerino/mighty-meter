@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -o errexit
 
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
+
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${DIR}/../lib/functions
 
-echo "WORKER will be uninstalled, wanna continue (y/n)?"
+
+print_uninstaller_message "The worker will be uninstalled.
+Do you want to continue? (y/n)"
 read x
 if [[ "$x" = "y" ]]
 then
@@ -12,6 +17,9 @@ then
   $DIR/mm-worker-rmi
   $DIR/mm-worker-rm-vol
 fi
+
+print_uninstaller_message "Worker uninstalled :("
+
 }
 
 main "$@"

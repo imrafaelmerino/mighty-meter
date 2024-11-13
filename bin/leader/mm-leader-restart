@@ -1,16 +1,30 @@
 #!/usr/bin/env bash
 
 echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
+echo "(MIGHTY-METER) | Executing $0 $@"
 echo ""
 
 main() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}"/../.defaults
 
+print_message "Restarting Grafana container..."
 docker restart ${_NAME_LEADER_GRAFANA_CONTAINER}
+if [ $? -eq 0 ]; then
+    print_message  "Container restarted!"
+fi
+
+print_message "Restarting InfluxDB container..."
 docker restart ${_NAME_LEADER_INFLUXDB_CONTAINER}
+if [ $? -eq 0 ]; then
+    print_message  "Container restarted!"
+fi
+
+print_message "Restarting Nginx container..."
 docker restart ${_NAME_LEADER_NGINX_CONTAINER}
+if [ $? -eq 0 ]; then
+    print_message  "Container restarted!"
+fi
 }
 
 main "$@"

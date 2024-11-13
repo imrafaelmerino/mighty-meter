@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
-docker pause ${_NAME_WORKER_SERVER_CONTAINER}
+source ${DIR}/../.lib/functions
+
+print_message "Pausing Worker container..."
+
+docker pause ${_NAME_WORKER_SERVER_CONTAINER}  > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to pause container."
+else
+  print_message "Container paused!"
+fi
 
 }
 

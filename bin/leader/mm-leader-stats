@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source "${DIR}"/../.defaults
 
+print_message "Printing out Grafana statistics..."
 docker stats --no-stream ${_NAME_LEADER_GRAFANA_CONTAINER}
+echo ""
+print_message "Printing out InfluxDB statistics..."
 docker stats --no-stream ${_NAME_LEADER_INFLUXDB_CONTAINER}
+echo ""
+print_message "Printing out Nginx statistics..."
 docker stats --no-stream ${_NAME_LEADER_NGINX_CONTAINER}
-
 }
 
 main "$@"

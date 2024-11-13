@@ -1,19 +1,32 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
 
 main(){
-echo "it will delete all the information stored on the volumes:
-${_NAME_VOLUME_JMETER_LOGS}
-wanna continue (y/n)?"
-read x
-if [[ "$x" = "y" ]]
-then
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
-docker volume rm ${_NAME_VOLUME_JMETER_LOGS}
+
+source "${DIR}/../lib/functions"
+
+print_uninstaller_message "This will delete all information stored on the volume ${_NAME_VOLUME_JMETER_LOGS}.
+Do you want to continue? (y/n)"
+
+
+read x
+
+if [[ "$x" = "y" ]]; then
+    if docker volume ls -q | grep -q "$_NAME_VOLUME_JMETER_LOGS"; then
+       print_uninstaller_message "Removing volume..."
+       docker volume rm "$_NAME_VOLUME_JMETER_LOGS" > /dev/null
+       print_uninstaller_message "Volume removed!"
+    else
+       print_uninstaller_message "Volume does not exist, skipping."
+    fi
 fi
+
 }
+
+main "$@"

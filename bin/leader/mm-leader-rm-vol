@@ -1,32 +1,32 @@
 #!/usr/bin/env bash
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
 
 main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}"/../.defaults
-echo "It will delete all the information stored on the volumes:
+source "${DIR}"/../lib/functions
+print_uninstaller_message "This will delete all information stored on the volumes:
 
-${_NAME_VOLUME_JMETER_LOGS}
-${_NAME_VOLUME_JMETER_REPORTS}
-${_NAME_VOLUME_JMETER_CONF}
-${_NAME_VOLUME_INFLUXDB}
-${_NAME_VOLUME_GRAFANA}
+- ${_NAME_VOLUME_JMETER_LOGS}
+- ${_NAME_VOLUME_JMETER_REPORTS}
+- ${_NAME_VOLUME_JMETER_CONF}
+- ${_NAME_VOLUME_INFLUXDB}
+- ${_NAME_VOLUME_GRAFANA}
 
-wanna continue (y/n)?"
+Do you want to continue? (y/n)"
 
 read x
 if [[ "$x" = "y" ]]
 then
 for volume in ${_NAME_VOLUME_JMETER_LOGS} ${_NAME_VOLUME_JMETER_CONF} ${_NAME_VOLUME_JMETER_REPORTS} ${_NAME_VOLUME_INFLUXDB} ${_NAME_VOLUME_GRAFANA}; do
   if docker volume ls -q | grep -q "$volume"; then
-    echo "Removing volume: $volume"
-    docker volume rm "$volume"
+    print_uninstaller_message "Removing volume $volume..."
+    docker volume rm "$volume" > /dev/null
+    print_uninstaller_message "Volume removed!"
   else
-    echo "Volume $volume does not exist, skipping."
+    print_uninstaller_message "Volume $volume does not exist, skipping."
   fi
 done
 

@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
 
+print_message "Pausing Grafana container..."
 docker pause ${_NAME_LEADER_GRAFANA_CONTAINER}
+print_message "Container paused!"
+
+
+print_message "Pausing InfluxDB container..."
 docker pause ${_NAME_LEADER_INFLUXDB_CONTAINER}
+print_message "Container paused!"
+
+
+print_message "Pausing Nginx container..."
 docker pause ${_NAME_LEADER_NGINX_CONTAINER}
+print_message "Container paused!"
 
 }
 

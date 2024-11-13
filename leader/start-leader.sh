@@ -1,30 +1,26 @@
 #!/bin/bash
-#set -o xtrace
 set -e
-#set -o pipefail
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+#echo "(MIGHTY-METER) | Executing $0 $@"
 
 display_usage() {
   echo -e "OPTIONS:
   
   -a Name of the application under test
+  -c Client RMI Start Port
   -d Duration of the test in seconds
   -e Environment where the target machine is
   -f JMeter configuration file *.jmx
   -h Host where the leader is running
   -i URL used by JMeter to send metrics of the ongoing test
+  -j JVM Heap options. -Xms512m -Xmx1g by default
+  -k Freq of samples send to Influxdb in seconds
   -n Name of the test
   -o Directory where the result will be stored
+  -p Property file that will be send to workers
   -r RAMP-UP period
   -s List of workers (host1:port1,host2:port2...)
-  -p Property file that will be send to workers
   -t Number of threads per worker
-  -j JVM Heap options. -Xms512m -Xmx1g by default
   -v Version of the application under test
-  -c Client RMI Start Port
-  -k Freq of samples send to Influxdb in seconds
   "
 }
 
@@ -116,26 +112,7 @@ DIR=${VOLUME_REPORTS}/${APP}/${TEST_NAME}/${CONCURRENT_USERS}-cu/${DATE_FORMATTE
 RESULT_FILE=${DIR}/result.jtl
 REPORT_DIR=${DIR}/report
 
-echo ""
-echo "The following variables have been defined:
-RESULT_FILE=${RESULT_FILE}
-NUM_OF_THREADS=${NUM_OF_THREADS}
-NUMBER_OF_WORKERS=${NUMBER_OF_WORKERS}
-CONCURRENT_USERS=${CONCURRENT_USERS}"
-
-
-var=$( cat ${FILE_PROP} )
-echo ""
-echo "Properties file send to workers:"
-
-echo "${var}"
-
 mkdir -p  ${REPORT_DIR}
-
-echo ""
-echo "Created output directory: ${REPORT_DIR}"
-echo ""
-
 
 CMD="jmeter -n -e -r \
 -t ${FILE_JMX} \
@@ -173,9 +150,7 @@ CMD="jmeter -n -e -r \
 -Gasynch.batch.queue.size=10000 \
 -Jbackend_influxdb.send_interval=${FREQ_SAMPLES}"
 
-echo "Starting leader:
-${CMD}"
-echo ""
+echo "Running the test plan..."
 ${CMD}
 
 #if report is not generated because of an error, remove the directory

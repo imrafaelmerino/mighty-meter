@@ -1,18 +1,26 @@
 #!/usr/bin/env bash
 
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
+
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${DIR}"/../lib/functions
 
-echo "LEADER will be uninstalled, wanna continue (y/n)?"
-
+echo ""
+print_uninstaller_message "All Leader components will be uninstalled.
+Do you want to continue? (y/n)"
 read x
 if [[ "$x" = "y" ]]
 then
+  echo ""
   $DIR/mm-leader-stop
   $DIR/mm-leader-rm
   $DIR/mm-leader-rmi
   $DIR/mm-leader-rm-vol
 fi
+
+print_uninstaller_message "Leader uninstalled :("
+
 }
 
 main "$@"

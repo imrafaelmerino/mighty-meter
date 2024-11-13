@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main(){
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source "${DIR}"/../lib/functions
+
 
 if ! $DIR/../lib/mm-leader-build; then
    exit 1
@@ -17,13 +17,15 @@ if ! $DIR/../lib/mm-leader-run; then
    exit 1
 fi
 
-if ! $DIR/../lib/mm-leader-init-metrics-db; then
+if ! $DIR/../lib/mm-leader-setup-influxdb; then
    exit 1
 fi
 
-if ! $DIR/../lib/mm-leader-init-dashboards; then
+if ! $DIR/../lib/mm-leader-setup-grafana; then
    exit 1
 fi
+
+print_message "Well done! Leader installed :)"
 
 }
 

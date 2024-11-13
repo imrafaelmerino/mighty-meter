@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main(){
 
@@ -16,6 +14,7 @@ source ${DIR}/../.defaults
 assertNotEmpty "_MIGHTY_METER_VERSION variable should be defined in .versions file" ${_MIGHTY_METER_VERSION}
 assertNotEmpty "_JMETER_VERSION variable should be defined in .versions file" ${_JMETER_VERSION}
 assertNotEmpty "_NAME_LEADER_NGINX_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_NGINX_IMAGE}
+assertNotEmpty "_NAME_LEADER_JMETER_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_JMETER_IMAGE}
 assertNotEmpty "_NAME_LEADER_JMETER_START_TESTS_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}
 assertNotEmpty "_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}
 assertNotEmpty "_PATH_VOLUME_JMETER_CONF variable should be defined in .defaults file" ${_PATH_VOLUME_JMETER_CONF}
@@ -25,43 +24,63 @@ assertNotEmpty "_JMETER_OPEN_JDK_VERSION variable should be defined in .defaults
 
 JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${_JMETER_VERSION}.tgz"
 
-print_message "Building mighty jmeter image..."
+print_message "Building JMeter image..."
 
-docker build -t mighty-jmeter:${_MIGHTY_METER_VERSION} \
+docker build --quiet -t ${_NAME_LEADER_JMETER_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} \
 --build-arg JMETER_OPEN_JDK_VERSION=${_JMETER_OPEN_JDK_VERSION} \
-"$DIR"/../../mighty-jmeter
-
-print_message "Building NGINX image..."
-
-docker build -t ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION} \
---build-arg NGINX_VERSION=${_NGINX_VERSION} \
-"$DIR"/../../leader/nginx/ || error_exit "Failed to build NGINX image"
-
-print_message "Building LEADER image for running distributed tests..."
-
-docker build -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
---build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
---build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
---build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
---build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
-"$DIR"/../../leader/ || error_exit "Failed to build LEADER image"
+"$DIR"/../../mighty-jmeter > /dev/null
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating Grafana Image with `docker build` command"
+    error_exit "Failed to build image"
+else
+  print_message "Image built!"
 fi
 
-print_message "Building LEADER image for running local-cli-mode tests..."
+print_message "Building NGinx image..."
 
-docker build -t ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
+docker build --quiet -t ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION} \
+--build-arg NGINX_VERSION=${_NGINX_VERSION} \
+--build-arg NGINX_NAME=${_NAME_NGINX_IMAGE} \
+"$DIR"/../../leader/nginx/ > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to build image"
+else
+  print_message "Image built!"
+fi
+
+print_message "Building Leader image for coordinating distributed tests..."
+
+docker build --quiet -t ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
 --build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
 --build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
 --build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
-"$DIR"/../../cli-mode/
+--build-arg MIGHTY_JMETER_NAME=${_NAME_LEADER_JMETER_IMAGE} \
+"$DIR"/../../leader/ > /dev/null
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating Leader JMeter Image with `docker build` command"
+    error_exit "Failed to build image"
+else
+  print_message "Image built!"
+fi
+
+
+print_message "Building Leader image for running local-cli-mode tests..."
+
+docker build --quiet -t ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
+--build-arg VOLUME_CONF=${_PATH_VOLUME_JMETER_CONF} \
+--build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
+--build-arg VOLUME_REPORTS=${_PATH_VOLUME_JMETER_REPORTS} \
+--build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
+--build-arg MIGHTY_JMETER_NAME=${_NAME_LEADER_JMETER_IMAGE} \
+"$DIR"/../../cli-mode/ > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to build image"
+else
+  print_message "Image built!"
 fi
 
 }

@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
 
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
 
-docker stop ${_NAME_LEADER_GRAFANA_CONTAINER}
-docker stop ${_NAME_LEADER_INFLUXDB_CONTAINER}
-docker stop ${_NAME_LEADER_NGINX_CONTAINER}
-
+print_uninstaller_message  "Stopping Grafana container..."
+docker stop ${_NAME_LEADER_GRAFANA_CONTAINER} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Container stopped!"
+fi
+print_uninstaller_message  "Stopping InfluxDB container..."
+docker stop ${_NAME_LEADER_INFLUXDB_CONTAINER} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Container stopped!"
+fi
+print_uninstaller_message  "Stopping Nginx container..."
+docker stop ${_NAME_LEADER_NGINX_CONTAINER} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Container stopped!"
+fi
 }
 
 main "$@"

@@ -1,20 +1,50 @@
 #!/usr/bin/env bash
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-UNINSTALLER) | Executing $0 $@"
 
 main() {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DIR}"/../.versions
 source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
 
-docker rmi ${_NAME_LEADER_GRAFANA_IMAGE}:${_MIGHTY_METER_VERSION}
-docker rmi ${_NAME_LEADER_INFLUXDB_IMAGE}:${_MIGHTY_METER_VERSION}
-docker rmi ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION}
-docker rmi ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION}
-docker rmi ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION}
+
+print_uninstaller_message "Removing JMeter image..."
+docker rmi ${_NAME_LEADER_JMETER_IMAGE}:${_MIGHTY_METER_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Image removed!"
+fi
+
+print_uninstaller_message "Removing Grafana image..."
+docker rmi ${_NAME_GRAFANA_IMAGE}:${_GRAFANA_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Image removed!"
+fi
+
+print_uninstaller_message "Removing InfluxDB image..."
+docker rmi ${_NAME_INFLUXDB_IMAGE}:${_INFLUXDB_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Image removed!"
+fi
+
+print_uninstaller_message "Removing Nginx image..."
+docker rmi ${_NAME_LEADER_NGINX_IMAGE}:${_MIGHTY_METER_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Image removed!"
+fi
+
+print_uninstaller_message "Removing Leader image..."
+docker rmi ${_NAME_LEADER_JMETER_START_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Image removed!"
+fi
+
+print_uninstaller_message "Removing Leader(Local-CLI-Mode) image..."
+docker rmi ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} > /dev/null
+if [ $? -eq 0 ]; then
+    print_uninstaller_message  "Image removed!"
+fi
 
 }
 

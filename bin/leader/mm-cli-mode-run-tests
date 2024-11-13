@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 if [[ ( $1 == "") ]]
   then
@@ -108,6 +107,7 @@ ENTRYPOINT_ARGS="\
 
 NAME_CONTAINER="${_NAME_LOCAL_CLI_MODE_JMETER_START_TESTS_CONTAINER}"
 
+print_command "Creating JMeter container..."
 
 docker create --rm  \
 -v ${_NAME_VOLUME_JMETER_CONF}:/etc/jmeter/conf \
@@ -116,13 +116,47 @@ docker create --rm  \
 --link ${_NAME_LEADER_INFLUXDB_CONTAINER} \
 --name ${NAME_CONTAINER} \
 ${_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE}:${_MIGHTY_METER_VERSION} \
-${ENTRYPOINT_ARGS}
+${ENTRYPOINT_ARGS} > /dev/null
 
-docker cp ${JMX_FILE} ${NAME_CONTAINER}:/etc/jmeter/conf/jmx/
+print_command "Container created!"
 
-docker cp ${PROPS_FILE}  ${NAME_CONTAINER}:/etc/jmeter/conf/props/
+print_command "Copying jmx file into container..."
+
+docker cp ${JMX_FILE} ${NAME_CONTAINER}:/etc/jmeter/conf/jmx/ > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to copy file."
+else
+    print_command "File copied!"
+fi
+
+print_command "Copying properties file into container..."
+
+docker cp ${PROPS_FILE}  ${NAME_CONTAINER}:/etc/jmeter/conf/props/ > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to copy file."
+else
+    print_command "File copied!"
+fi
+
+print_command "Starting JMeter container..."
 
 docker start -a ${NAME_CONTAINER}
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to start container."
+else
+    print_command "Container removed!"
+fi
+
+print_command "Links of interest:
+
+- (JMeter reports)     http://localhost:${_NGINX_PORT}/mighty-meter/reports/
+- (Dashboards)         http://localhost:${_GRAFANA_PORT}/
+- (Jmeter logs)        http://localhost:${_NGINX_PORT}/mighty-meter/logs/
+
+"
 
 }
 

@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 set -o errexit
 
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main(){
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
+source ${DIR}/../lib/functions
+
+print_message "Opening Bash console in the Worker container..."
+
 docker exec -it ${_NAME_WORKER_SERVER_CONTAINER} bash
 
 }

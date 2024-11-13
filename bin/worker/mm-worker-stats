@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 set -o errexit
 
-
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main() {
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source ${DIR}/../.defaults
+
 docker stats ${_NAME_WORKER_SERVER_CONTAINER}
+
 }
 
 main "$@"

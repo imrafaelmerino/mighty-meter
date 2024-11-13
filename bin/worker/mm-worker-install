@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 display_usage() {
   echo -e "-h Host or IP of the machine where the worker will be running
@@ -41,7 +39,11 @@ if ! $DIR/../lib/mm-worker-build; then
    exit 1
 fi
 
-$DIR/../lib/mm-worker-run --worker-host ${HOST}
+if ! $DIR/../lib/mm-worker-run --worker-host ${HOST}; then
+   exit 1
+fi
+
+print_message "Well done! Worker installed :)"
 
 }
 

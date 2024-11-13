@@ -1,7 +1,5 @@
 #!/bin/bash
-#set -o errexit
-#set -o pipefail
-# set -o xtrace
+
 display_usage() {
   echo ""
   echo   "OPTIONS:
@@ -18,8 +16,9 @@ if [[ ( $1 == "") ]]
     display_usage
     exit 0
 fi
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+
+echo "(MIGHTY-METER) | Executing $0 $@"
+
 while getopts p:c:h:r:l: option
 do
 case "${option}"
@@ -72,8 +71,6 @@ fi
 export HEAP=${HEAP_OPTIONS}
 export GC_ALGO="-XX:+UseZGC -XX:+ZGenerational"
 
-echo "HEAP OPTIONS: ${HEAP}"
-echo ""
 
 CMD="jmeter
 -n -s
@@ -89,9 +86,7 @@ CMD="jmeter
 -Dsun.rmi.transport.logLevel=verbose \
 -Dsun.rmi.transport.tcp.logLevel=verbose"
 
-echo "Starting worker:
-${CMD}"
-
-echo ""
+echo "Starting JMeter worker server. Waiting for test plans to be sent by the Leader..."
 
 ${CMD}
+

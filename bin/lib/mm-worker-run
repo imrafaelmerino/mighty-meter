@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main() {
 
@@ -13,7 +12,7 @@ source ${DIR}/../.defaults
 
 while [ "$1" != "" ]; do
     case $1 in
-        --worker-host )          shift
+        --worker-host )         shift
                                 WORKER_HOST=$1
                                 ;;
         --image-name )          shift
@@ -54,12 +53,21 @@ assertNotEmpty "_PATH_VOLUME_JMETER_LOGS is missing in .defaults file" ${_PATH_V
 
 ENTRYPOINT_ARGS="-p ${_RMI_REGISTRY_PORT} -l ${_RMI_SERVER_PORT} -r ${WORKER_HOST}"
 
+print_message "Starting Worker container..."
+
 docker run -d --rm \
 --name="${CONTAINER_NAME}" \
 -p ${_RMI_REGISTRY_PORT}:${_RMI_REGISTRY_PORT} \
 -p ${_RMI_SERVER_PORT}:${_RMI_SERVER_PORT} \
 -v ${_NAME_VOLUME_JMETER_LOGS}:${_PATH_VOLUME_JMETER_LOGS} \
-${IMAGE_NAME} ${ENTRYPOINT_ARGS}
+${IMAGE_NAME} ${ENTRYPOINT_ARGS} > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to start container."
+else
+    print_message "Container running!"
+fi
+
 }
 
 usage(){
@@ -69,10 +77,9 @@ echo "--container-name is optional. The default value is the defined in .default
 }
 
 unknown_argument(){
-echo "unknown argument: $1"
+print_message "unknown argument: $1"
 usage
 }
-
 
 main "$@"
 

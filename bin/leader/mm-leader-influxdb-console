@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER) | Executing $0 $@"
 
 main() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${DIR}"/../.defaults
+source "${DIR}"/../lib/functions
+
+print_message "Opening InfluxDB console..."
 
 docker exec -it  ${_NAME_LEADER_INFLUXDB_CONTAINER} bash -c "influx v1 shell"
+
 }
 
 main "$@"

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main(){
 
@@ -12,7 +10,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${DIR}/functions
 source ${DIR}/../.defaults
 
-sleep 2
+WAITING_TIME=2
+
+print_message "Setting up InfluxDB..."
+
+print_message "Waiting $WAITING_TIME sec for InfluxDB container to be started..."
+
+sleep $WAITING_TIME
 
 docker exec -it ${_NAME_LEADER_INFLUXDB_CONTAINER} bash -c \
 "influx setup \
@@ -20,10 +24,12 @@ docker exec -it ${_NAME_LEADER_INFLUXDB_CONTAINER} bash -c \
 --token=${_INFLUXDB_TOKEN} \
 --org=${_INFLUXDB_ORG} \
 --username=${_INFLUXDB_USERNAME} \
---password=${_INFLUXDB_PASSWORD} --force"
+--password=${_INFLUXDB_PASSWORD} --force" > /dev/null
 
 if [ $? -ne 0 ]; then
-    error_exit "Error creating INFLUXDB container"
+    error_exit "Failed to setup."
+else
+    print_message "Setup executed!"
 fi
 }
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
-echo ""
-echo "(MIGHTY-METER-INSTALLER) | Executing script: $0 $@"
-echo ""
+
+echo "(MIGHTY-METER-INSTALLER) | Executing $0 $@"
 
 main(){
 
@@ -13,6 +12,7 @@ source ${DIR}/../.defaults
 
 assertNotEmpty "_MIGHTY_METER_VERSION variable should be defined in .versions file" ${_MIGHTY_METER_VERSION}
 assertNotEmpty "_JMETER_VERSION variable should be defined in .versions file" ${_JMETER_VERSION}
+assertNotEmpty "_NAME_WORKER_JMETER_IMAGE variable should be defined in .defaults file" ${_NAME_WORKER_JMETER_IMAGE}
 assertNotEmpty "_NAME_WORKER_SERVER_IMAGE variable should be defined in .defaults file" ${_NAME_LEADER_NGINX_IMAGE}
 assertNotEmpty "_PATH_VOLUME_JMETER_LOGS variable should be defined in .defaults file" ${_PATH_VOLUME_JMETER_LOGS}
 assertNotEmpty "_JMETER_OPEN_JDK_VERSION variable should be defined in .defaults file" ${_JMETER_OPEN_JDK_VERSION}
@@ -20,19 +20,33 @@ assertNotEmpty "_JMETER_OPEN_JDK_VERSION variable should be defined in .defaults
 
 JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${_JMETER_VERSION}.tgz"
 
-echo ${JMETER_URL}
-echo "Building mighty-jmeter image..."
-docker build -t mighty-jmeter:${_MIGHTY_METER_VERSION} \
+print_message "Building JMeter image..."
+
+docker build --quiet -t ${_NAME_WORKER_JMETER_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg JMETER_DOWNLOAD_URL=${JMETER_URL} \
 --build-arg JMETER_OPEN_JDK_VERSION=${_JMETER_OPEN_JDK_VERSION} \
-${DIR}/../../mighty-jmeter || error_exit "Failed to build mighty-jmeter image"
+${DIR}/../../mighty-jmeter > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to build image."
+else
+  print_message "Image built!"
+fi
 
 
-echo "Building mighty-worker image..."
-docker build -t ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION} \
+print_message "Building Worker image..."
+docker build --quiet -t ${_NAME_WORKER_SERVER_IMAGE}:${_MIGHTY_METER_VERSION} \
 --build-arg VOLUME_LOGS=${_PATH_VOLUME_JMETER_LOGS} \
 --build-arg MIGHTY_METER_VERSION=${_MIGHTY_METER_VERSION} \
-${DIR}/../../worker || error_exit "Failed to build mighty-worker image"
+--build-arg MIGHTY_JMETER_NAME=${_NAME_WORKER_JMETER_IMAGE} \
+${DIR}/../../worker > /dev/null
+
+if [ $? -ne 0 ]; then
+    error_exit "Failed to build image."
+else
+  print_message "Image built"
+fi
+
 
 }
 

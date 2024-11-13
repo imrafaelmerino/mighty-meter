@@ -1,17 +1,17 @@
-<Configuration status="WARN" packages="org.apache.jmeter.gui.logging">
-
+<Configuration>
   <Appenders>
-
-    <RollingRandomAccessFile name="worker-appender" fileName="/var/log/jmeter/jmeter-worker.log"
-                             filePattern="/var/log/jmeter/$${date:yyyy-MM}/jmeter-worker%d{MM-dd-yyyy}-%i.log.gz" append="true">
+    <RollingRandomAccessFile name="worker-appender"
+      fileName="/var/log/jmeter/worker-jmeter.log"
+      filePattern="/var/log/jmeter/$${date:yyyy-MM}/worker-jmeter-%d{MM-dd-yyyy}-%i.log.gz"
+      append="true">
       <PatternLayout>
         <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
       </PatternLayout>
       <Policies>
-        <TimeBasedTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="1000 MB"/>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="1GB"/>
       </Policies>
-      <DefaultRolloverStrategy max="20"/>
+      <DefaultRolloverStrategy max="1000"/>
     </RollingRandomAccessFile>
 
     <Async name="Async">
@@ -23,7 +23,7 @@
   <Loggers>
 
     <Root level="info">
-      <AppenderRef ref="Async" />
+      <AppenderRef ref="Async"/>
     </Root>
 
   </Loggers>

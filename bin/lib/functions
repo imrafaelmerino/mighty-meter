@@ -3,7 +3,7 @@ set +e
 assertNotEmpty () {
   if [[ -z $2 ]]
     then
-      echo "$1"
+      echo "(MIGHTY-METER-INSTALLER) | $1"
       exit 1
   fi
 }
@@ -16,6 +16,14 @@ error_exit() {
 
 print_message() {
    echo "(MIGHTY-METER-INSTALLER) | $1"
+}
+
+print_command() {
+   echo "(MIGHTY-METER) | $1"
+}
+
+print_uninstaller_message() {
+   echo "(MIGHTY-METER-UNINSTALLER) | $1"
 }
 
 

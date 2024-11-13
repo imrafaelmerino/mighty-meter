@@ -16,12 +16,23 @@ _NAME_WORKER_SERVER_CONTAINER=mm-worker-server
 _NAME_LEADER_JMETER_START_TESTS_CONTAINER=mm-leader-run-tests
 _NAME_LOCAL_CLI_MODE_JMETER_START_TESTS_CONTAINER=mm-local-cli-mode-run-tests
 
-_NAME_LEADER_JMETER_START_TESTS_IMAGE=mighty-meter/leader-distributed/run-tests
-_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE=mighty-meter/local-cli-mode/run-tests
-_NAME_LEADER_GRAFANA_IMAGE=mighty-meter/leader/grafana
-_NAME_LEADER_INFLUXDB_IMAGE=mighty-meter/leader/influxdb
+_NAME_LEADER_JMETER_START_TESTS_IMAGE=mighty-meter/leader/run-distributed-tests
+_NAME_LEADER_JMETER_START_LOCAL_CLI_TESTS_IMAGE=mighty-meter/leader/run-local-cli-tests
+
+#official name, it must exist in registry
+_NAME_GRAFANA_IMAGE=grafana/grafana
+
+#official name, it must exist in registry
+_NAME_INFLUXDB_IMAGE=influxdb
+
+#official name, it must exist in registry
+_NAME_NGINX_IMAGE=nginx
+
 _NAME_LEADER_NGINX_IMAGE=mighty-meter/leader/nginx
+_NAME_LEADER_JMETER_IMAGE=mighty-meter/leader/jmeter
+
 _NAME_WORKER_SERVER_IMAGE=mighty-meter/worker/server
+_NAME_WORKER_JMETER_IMAGE=mighty-meter/worker/jmeter
 
 _NAME_VOLUME_JMETER_CONF=mm-jmeter-conf
 _PATH_VOLUME_JMETER_CONF=/etc/jmeter/conf
@@ -51,10 +62,9 @@ _INFLUXDB_WRITE_URL="http://${_NAME_LEADER_INFLUXDB_CONTAINER}:${_INFLUX_DB_PORT
 
 _NGINX_PORT=80
 
-
 ######## GRAFANA PROPERTIES ###############
 
 _NAME_DATASOURCE=mighty-meter
 _NAME_DASHBOARD=mighty-meter
-_GRAFANA_URL="http://admin:admin@localhost:${_NGINX_PORT}/grafana/api"
-
+_GRAFANA_PORT=3000
+_GRAFANA_API_URL="http://admin:admin@localhost:${_GRAFANA_PORT}/api"

@@ -72,19 +72,11 @@ export HEAP=${HEAP_OPTIONS}
 export GC_ALGO="-XX:+UseZGC -XX:+ZGenerational"
 
 
-CMD="jmeter
--n -s
--i $LOG_CONF_PATH \
+CMD="jmeter -n -s -i $LOG_CONF_PATH \
 -Djava.rmi.server.hostname=$HOST \
 -Jserver.rmi.port=$REGISTRY_PORT \
 -Jserver.rmi.localport=$RMI_PORT \
--Jserver.rmi.ssl.disable=true \
--Dsun.rmi.log.debug=true \
--Dsun.rmi.server.exceptionTrace=true \
--Dsun.rmi.loader.logLevel=verbose \
--Dsun.rmi.dgc.logLevel=verbose \
--Dsun.rmi.transport.logLevel=verbose \
--Dsun.rmi.transport.tcp.logLevel=verbose"
+-Jserver.rmi.ssl.disable=true"
 
 echo "Starting JMeter worker server. Waiting for test plans to be sent by the Leader..."
 

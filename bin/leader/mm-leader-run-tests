@@ -168,6 +168,15 @@ if [ $? -ne 0 ]; then
 else
     print_command "Container removed!"
 fi
+
+
+print_command "Links of interest:
+
+- (JMeter reports)     http://localhost:${_NGINX_PORT}/jmeter/reports/
+- (Dashboards)         http://localhost:${_NGINX_PORT}/grafana
+- (Jmeter logs)        http://localhost:${_NGINX_PORT}/jmeter/logs/
+
+"
 }
 
 display_usage() {

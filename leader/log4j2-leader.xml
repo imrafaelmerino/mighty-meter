@@ -1,6 +1,6 @@
 <Configuration>
   <Appenders>
-    <RollingRandomAccessFile name="leader-appender"
+    <RollingRandomAccessFile name="rolling-appender"
       fileName="/var/log/jmeter/leader-jmeter.log"
       filePattern="/var/log/jmeter/$${date:yyyy-MM-dd}/leader-jmeter-%d{yyyy-MM-dd-HH-mm-ss}-%i.log.gz"
       append="true">
@@ -14,11 +14,11 @@
       <DefaultRolloverStrategy max="1000"/>
     </RollingRandomAccessFile>
     <Async name="Async">
-      <AppenderRef ref="leader-appender"/>
+      <AppenderRef ref="rolling-appender"/>
     </Async>
   </Appenders>
   <Loggers>
-    <Root level="info">
+    <Root level="debug">
       <AppenderRef ref="Async"/>
     </Root>
   </Loggers>

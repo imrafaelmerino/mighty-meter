@@ -99,7 +99,6 @@ fi
 
 export HEAP="${HEAP_OPTIONS}"
 
-
 set +e
 NUMBER_OF_COMMAS=$(echo "${WORKER_HOSTS}" | grep -o "," | wc -l)
 set -e
@@ -120,11 +119,6 @@ CMD="jmeter -n -e -r \
 -i /etc/jmeter/log-conf.xml \
 -q ${FILE_PROP} \
 -o ${REPORT_DIR} \
--Dsun.rmi.server.exceptionTrace=true \
--Dsun.rmi.loader.logLevel=verbose \
--Dsun.rmi.dgc.logLevel=verbose \
--Dsun.rmi.transport.logLevel=verbose \
--Dsun.rmi.transport.tcp.logLevel=verbose \
 -Jclient.tries=10 \
 -Jclient.retries_delay=5000 \
 -Jclient.continue_on_fail=false  \
@@ -151,6 +145,7 @@ CMD="jmeter -n -e -r \
 -Jbackend_influxdb.send_interval=${FREQ_SAMPLES}"
 
 echo "Running the test plan..."
+
 ${CMD}
 
 #if report is not generated because of an error, remove the directory

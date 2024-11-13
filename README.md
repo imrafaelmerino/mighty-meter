@@ -60,7 +60,7 @@ To set up the system, ensure you have the following:
 
 - Docker installed
 - Download the latest release of MightyMeter from
-  [GitHub](https://github.com/imrafaelmerino/mighty-meter/releases))
+  [GitHub](https://github.com/imrafaelmerino/mighty-meter/releases)
 - Extract the downloaded file and grant execution permissions for the scripts in the `bin` folder
 - It’s recommended to add the following paths to your shell’s environment `PATH` variable:
 

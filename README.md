@@ -12,9 +12,7 @@
 - [Running Tests](#running-tests)
 - [Grafana Dashboards](#grafana-dashboards)
 - [Querying the Database](#querying-db)
-- [Configuration Options](#config-options)
 - [Additional Commands](#additional-commands)
-- [Common Issues](#common-issues)
 
 ## <a name="intro"></a> Introduction
 
@@ -60,8 +58,9 @@ reporting.
 
 To set up the system, ensure you have the following:
 
-- Docker
-- The latest version of MightyMeter (download the latest release from GitHub)
+- Docker installed
+- Download the latest release of MightyMeter from
+  [GitHub](https://github.com/imrafaelmerino/mighty-meter/releases))
 - Extract the downloaded file and grant execution permissions for the scripts in the `bin` folder
 - It’s recommended to add the following paths to your shell’s environment `PATH` variable:
 
@@ -72,7 +71,8 @@ export PATH="$MIGHTY_METER_HOME/bin/leader:$MIGHTY_METER_HOME/bin/worker:$PATH"
 
 ## <a name="leader-install"></a> Installation of the Leader
 
-For the machine intended as the **Leader** and MightyMeter downloaded, run the following commands:
+For the machine intended as the **Leader** and MightyMeter downloaded, run the following shell
+script:
 
 ```shell
 mm.leader.host$ mm-leader-install
@@ -81,13 +81,15 @@ mm.leader.host$ mm-leader-install
 Services on the Leader will be set up as follows:
 
 - **Nginx** is listening on port 80.
-- **Grafana** is accessible at [http://localhost/grafana](http://localhost/grafana) (set up as a reverse proxy through Nginx).
-- **InfluxDB** is running in a container. Refer to [Querying the Database](#querying-db) for instructions on opening the CLI.
-- JMeter leader containers are created at the start of a test and removed once the test is complete.
+- **Grafana** is accessible at [http://localhost/grafana](http://localhost/grafana) (set up as a
+  reverse proxy through Nginx).
+- **InfluxDB** is running in a container. Refer to [Querying the Database](#querying-db) for
+  instructions on opening the CLI.
+- **JMeter** leader container is created at the start of a test and removed once the test is
+  complete.
 
-Port can be customized via the variable `_NGINX_PORT`
-in the [`.defaults`](bin/.defaults) file. Component versions are specified in the [`.versions`](bin/.versions) 
-file:
+Port can be customized via the variable `_NGINX_PORT` in the [`.defaults`](bin/.defaults) file.
+Component versions are specified in the [`.versions`](bin/.versions) file:
 
 ```shell
 _MIGHTY_METER_VERSION=1.0.0
@@ -98,26 +100,15 @@ _JMETER_VERSION=5.6.3
 _JMETER_OPEN_JDK_VERSION=21-oraclelinux8
 ```
 
-The following Docker volumes are created:
-
-- `mm-jmeter-conf`: stores the JMX and properties files for each test, created at test run.
-- `mm-tests-reports`: stores test reports in text and HTML formats.
-- `mm-jmeter-logs`: stores JMeter logs.
-- `mm-dashboards`: stores Grafana dashboards.
-- `mm-metrics-db`: stores the InfluxDB database.
-
-Inspect all volumes with `mm-leader-inspect-vol`.
-
 **You are now ready to use MightyMeter in CLI mode from your local machine!** Check out
-[this example](examples/run-local-cli-mode-testing-example.sh) in the [examples](examples) folder to
-get started.
+[this example](examples/run-local-cli-mode-testing-example.sh) to get started.
 
 ## <a name="worker-install"></a> Installation of the Workers
 
 To set up distributed testing, first install the **Leader** on a designated machine. Next, install
 MightyMeter on each **Worker** machine. For example, on each **Worker** machine with hostnames such
-as **mm.worker.host1**, **mm.worker.host2**, download MightyMeter and execute the following command
-on each Worker:
+as **mm.worker.host1**, **mm.worker.host2**, download MightyMeter and execute the following shell
+script on each Worker:
 
 ```shell
 mm.worker.host1$ mm-worker-install --host mm.worker.host1
@@ -127,9 +118,8 @@ mm.worker.host1$ mm-worker-install --host mm.worker.host1
 mm.worker.host2$ mm-worker-install --host mm.worker.host2
 ```
 
-Each Worker will create a Docker volume named `mm-jmeter-logs` for log storage. 
-
-Don't install the worker nodes on the same machine as the leader—it defeats the purpose. For single-machine setups, use MightyMeter in local CLI mode instead.
+Don't install the worker nodes on the same machine as the leader—it defeats the purpose. For
+single-machine setups, use MightyMeter in local CLI mode instead.
 
 ## <a name="jmx-config"></a> Configuring Your JMX File
 
@@ -150,7 +140,8 @@ Here's how it looks in the JMeter GUI if you open the file:
 
 ### Distributed testing
 
-To start a test from the Leader, run `mm-leader-run-tests` with options like:
+To start a distributed test, go to the leader machine and run the shell script `mm-leader-run-tests`
+with options like:
 
 ```shell
 mm.leader.host$ mm-leader-run-tests \
@@ -210,15 +201,24 @@ localhost$ mm-cli-mode-run-tests \
 - **jmx-file**: JMeter configuration file (with listener included).
 - **props-file**: additional properties for JMeter.
 
-This command creates an ephemeral Docker container to start a JMeter that executes the test.
-Monitor tests in real-time on Grafana at `http://localhost:3000` (default login: `admin/admin`).
+This command creates an ephemeral Docker container to start a JMeter that executes the test. Monitor
+tests in real-time on Grafana at `http://localhost:3000` (default login: `admin/admin`).
 
 ## <a name="grafana-dashboards"></a> Grafana Dashboards
 
-MightyMeter provides dashboards for real-time and historical data:
+MightyMeter offers a range of dashboards to visualize both real-time and historical data:
 
-![GUI](./image/grafana_dashboards.png) ![GUI](./image/grafana_compare_versions.png)
-![GUI](./image/grafana_compare_users.png)
+![GUI](./image/grafana_dashboards.png)
+
+Here are a few examples:
+
+- For real-time monitoring: ![GUI](./image/grafana_realtime.png)
+
+- To compare two different versions of the same application under identical conditions:
+  ![GUI](./image/grafana_compare_versions.png)
+
+- To compare the performance of the same application version under varying user loads:
+  ![GUI](./image/grafana_compare_users.png)
 
 ## <a name="querying-db"></a> Querying the Database
 
@@ -240,14 +240,22 @@ mm.leader.host$ mm-leader-influxdb-console
 
 ```
 
-## <a name="config-options"></a> Configuration Options
-
-Change ports in the **.defaults** file or specify alternative versions in the **.versions** file.
-
 ## <a name="additional-commands"></a> Additional Commands
 
-- **Uninstall MightyMeter**: `mm-leader-uninstall` on the Leader, and `mm-worker-uninstall` on
-  Workers.
+- **Uninstall MightyMeter**: Run uninstall shell scripts on the Leader and each Worker
+
+  ```shell
+  mm.worker.leader$ mm-leader-uninstall
+  ```
+
+  ```shell
+  mm.worker.host1$ mm-worker-uninstall
+  ```
+
+  ```shell
+  mm.worker.host2$ mm-worker-uninstall
+  ```
+
 - **Access Worker Logs**:
 
   ```shell

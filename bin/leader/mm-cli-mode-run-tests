@@ -152,9 +152,9 @@ fi
 
 print_command "Links of interest:
 
-- (JMeter reports)     http://localhost:${_NGINX_PORT}/mighty-meter/reports/
-- (Dashboards)         http://localhost:${_GRAFANA_PORT}/
-- (Jmeter logs)        http://localhost:${_NGINX_PORT}/mighty-meter/logs/
+- (JMeter reports)     http://localhost:${_NGINX_PORT}/jmeter/reports/
+- (Dashboards)         http://localhost:${_NGINX_PORT}/grafana
+- (Jmeter logs)        http://localhost:${_NGINX_PORT}/jmeter/logs/
 
 "
 

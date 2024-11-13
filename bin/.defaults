@@ -66,5 +66,4 @@ _NGINX_PORT=80
 
 _NAME_DATASOURCE=mighty-meter
 _NAME_DASHBOARD=mighty-meter
-_GRAFANA_PORT=3000
-_GRAFANA_API_URL="http://admin:admin@localhost:${_GRAFANA_PORT}/api"
+_GRAFANA_API_URL="http://admin:admin@localhost:${_NGINX_PORT}/grafana/api"

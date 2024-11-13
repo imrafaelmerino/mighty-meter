@@ -60,7 +60,7 @@ To set up the system, ensure you have the following:
 
 - Docker installed
 - Download the latest release of MightyMeter from
-  [GitHub](https://github.com/imrafaelmerino/mighty-meter/releases)
+  [here](https://github.com/imrafaelmerino/mighty-meter/releases)
 - Extract the downloaded file and grant execution permissions for the scripts in the `bin` folder
 - It’s recommended to add the following paths to your shell’s environment `PATH` variable:
 
@@ -212,12 +212,16 @@ MightyMeter offers a range of dashboards to visualize both real-time and histori
 
 Here are a few examples:
 
-- For real-time monitoring: ![GUI](./image/grafana_realtime.png)
+- For real-time monitoring: 
+
+  ![GUI](./image/grafana_realtime.png)
 
 - To compare two different versions of the same application under identical conditions:
+
   ![GUI](./image/grafana_compare_versions.png)
 
 - To compare the performance of the same application version under varying user loads:
+
   ![GUI](./image/grafana_compare_users.png)
 
 ## <a name="querying-db"></a> Querying the Database

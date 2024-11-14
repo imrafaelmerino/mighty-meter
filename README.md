@@ -279,14 +279,14 @@ mm.leader.host$ mm-leader-influxdb-console
   mm.worker.host2$ mm-worker-uninstall
   ```
 
-- **Access Worker Logs**:
+- **Access Worker JMeter Logs**:
 
   ```shell
   mm.worker.host1$ mm-worker-bash
   root@container# tail -f /var/log/jmeter/jmeter.log
   ```
 
-- **Access Leaders Logs**:
+- **Access Leader JMeter Logs**:
 
 Go to http://localhost/jmeter/logs/
 

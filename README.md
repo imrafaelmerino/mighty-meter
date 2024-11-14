@@ -59,7 +59,7 @@ reporting.
 To set up the system, ensure you have the following:
 
 - Docker installed
-- Download the [latest release](<(https://github.com/imrafaelmerino/mighty-meter/releases)>) of
+- Download the [latest release](https://github.com/imrafaelmerino/mighty-meter/releases) of
   MightyMeter
 - Extract the downloaded file and grant execution permissions for the scripts in the `bin` folder
 - It’s recommended to add the following paths to your shell’s environment `PATH` variable:

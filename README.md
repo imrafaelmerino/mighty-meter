@@ -165,7 +165,7 @@ mm.leader.host$ mm-leader-run-tests \
 --num-threads 20 \
 --ramp-up 60 \
 --leader-host mm.leader.host \
---worker-hosts mm.worker.host1,mm.worker.host2,mm.worker.host3 \
+--worker-hosts mm.worker.host1,mm.worker.host2 \
 --env Production \
 --jmx-file /path/to/jmx-file \
 --props-file /path/to/props-file \

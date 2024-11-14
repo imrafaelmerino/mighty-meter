@@ -59,14 +59,19 @@ reporting.
 To set up the system, ensure you have the following:
 
 - Docker installed
-- Download the latest release of MightyMeter from
-  [here](https://github.com/imrafaelmerino/mighty-meter/releases)
+- Download the [latest release](<(https://github.com/imrafaelmerino/mighty-meter/releases)>) of
+  MightyMeter
 - Extract the downloaded file and grant execution permissions for the scripts in the `bin` folder
 - It’s recommended to add the following paths to your shell’s environment `PATH` variable:
 
 ```shell
+
 MIGHTY_METER_HOME="PATH_TO_HOME"
+
+chmod -R +x ${MIGHTY_METER_HOME}/bin
+
 export PATH="$MIGHTY_METER_HOME/bin/leader:$MIGHTY_METER_HOME/bin/worker:$PATH"
+
 ```
 
 ## <a name="leader-install"></a> Installation of the Leader
@@ -75,7 +80,9 @@ For the machine intended as the **Leader** and MightyMeter downloaded, run the f
 script:
 
 ```shell
+
 mm.leader.host$ mm-leader-install
+
 ```
 
 Services on the Leader will be set up as follows:
@@ -87,17 +94,25 @@ Services on the Leader will be set up as follows:
   instructions on opening the CLI.
 - **JMeter** leader container is created at the start of a test and removed once the test is
   complete.
+- In addition to Grafana dashboards, you can view APDEX JMeter reports at
+  http://localhost/jmeter/reports in HTML format and download them as `jtl` files. The JTL format is
+  used by JMeter to store performance test results, typically in CSV files. Each JTL file logs data
+  gathered during a test, including metrics such as response times, status codes, sample names, and
+  other performance indicators.
+
+![GUI](./image/jmeter_report.png)
 
 Port can be customized via the variable `_NGINX_PORT` in the [`.defaults`](bin/.defaults) file.
 Component versions are specified in the [`.versions`](bin/.versions) file:
 
 ```shell
-_MIGHTY_METER_VERSION=1.0.0
+
 _INFLUXDB_VERSION=2.7.10
 _GRAFANA_VERSION=11.3.0
 _NGINX_VERSION=1.27.2
 _JMETER_VERSION=5.6.3
 _JMETER_OPEN_JDK_VERSION=21-oraclelinux8
+
 ```
 
 **You are now ready to use MightyMeter in CLI mode from your local machine!** Check out
@@ -130,10 +145,10 @@ Here's how it looks in the JMeter GUI if you open the file:
 
 ![GUI](./image/gui-mighty-meter-listener.png)
 
-**Only** modify:
+**You can only modify the following:**
 
-- **eventTags** variable: set to your chosen value (will appear in the InfluxDB `events` and
-  `statistics` measurements).
+- The `eventTags` variable: set this to your chosen value (it will appear in the `tags` field within
+  the InfluxDB `events` measurement). This value is for informational purposes only.
 - Add custom tags in the format `TAG_name=value`.
 
 ## <a name="running-tests"></a> Running Tests
@@ -144,6 +159,7 @@ To start a distributed test, go to the leader machine and run the shell script `
 with options like:
 
 ```shell
+
 mm.leader.host$ mm-leader-run-tests \
 --duration 3600 \
 --num-threads 20 \
@@ -156,6 +172,7 @@ mm.leader.host$ mm-leader-run-tests \
 --app MyApp \
 --app-version 1.0.0 \
 --test-name PerformanceTest
+
 ```
 
 #### Options:
@@ -178,6 +195,7 @@ login: `admin/admin`).
 ### Local CLI Mode
 
 ```shell
+
 localhost$ mm-cli-mode-run-tests \
 --duration 20 \
 --num-threads 10 \
@@ -188,6 +206,7 @@ localhost$ mm-cli-mode-run-tests \
 --app myapp \
 --app-version 1.0.0 \
 --test-name anotherTest
+
 ```
 
 #### Options:
@@ -202,7 +221,7 @@ localhost$ mm-cli-mode-run-tests \
 - **props-file**: additional properties for JMeter.
 
 This command creates an ephemeral Docker container to start a JMeter that executes the test. Monitor
-tests in real-time on Grafana at `http://localhost:3000` (default login: `admin/admin`).
+tests in real-time on Grafana at `http://localhost/grafana` (default login: `admin/admin`).
 
 ## <a name="grafana-dashboards"></a> Grafana Dashboards
 
@@ -212,7 +231,7 @@ MightyMeter offers a range of dashboards to visualize both real-time and histori
 
 Here are a few examples:
 
-- For real-time monitoring: 
+- For real-time monitoring:
 
   ![GUI](./image/grafana_realtime.png)
 
@@ -264,8 +283,12 @@ mm.leader.host$ mm-leader-influxdb-console
 
   ```shell
   mm.worker.host1$ mm-worker-bash
-  root@container# tail -f /var/log/jmeter/jmeter-worker.log
+  root@container# tail -f /var/log/jmeter/jmeter.log
   ```
+
+- **Access Leaders Logs**:
+
+Go to http://localhost/jmeter/logs/
 
 - **Stop a running Test**:
 

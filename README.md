@@ -2,6 +2,8 @@
   <img src="./image/logo.png" alt="Logo" width="300" height="300" />
 </p>
 
+“_Power Meets Simplicity in Just Three Clicks!._”
+
 # MightyMeter
 
 - [Introduction](#intro)
@@ -169,7 +171,7 @@ mm.leader.host$ mm-leader-run-tests \
 --env Production \
 --jmx-file /path/to/jmx-file \
 --props-file /path/to/props-file \
---app MyApp \
+--app My App \
 --app-version 1.0.0 \
 --test-name PerformanceTest
 

@@ -2,7 +2,7 @@
   <img src="./image/logo.png" alt="Logo" width="300" height="300" />
 </p>
 
-“_Power Meets Simplicity in Just Three Clicks!._”
+“_Power Meets Simplicity in Just Three Clicks_”
 
 # MightyMeter
 

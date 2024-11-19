@@ -15,6 +15,7 @@
 - [Grafana Dashboards](#grafana-dashboards)
 - [Querying the Database](#querying-db)
 - [Additional Commands](#additional-commands)
+- [Generating Data](#generators)
 
 ## <a name="intro"></a> Introduction
 
@@ -299,3 +300,16 @@ Go to http://localhost/jmeter/logs/
   ```
 
 ---
+
+## <a name="generators"></a> Generating Data
+
+Generating data becomes straightforward and highly efficient with tools like
+[java-fun](https://github.com/imrafaelmerino/java-fun?tab=readme-ov-file#prg) for any data structure
+and [json-values](https://github.com/imrafaelmerino/json-values?tab=readme-ov-file#gen) for JSON.
+
+To start generating data, simply place the JAR file containing the generators into JMeter's
+[ext-libraries](mighty-jmeter/ext-libraries) folder. For detailed instructions, refer to the
+[java-fun](https://github.com/imrafaelmerino/java-fun?tab=readme-ov-file#jmeter) project readme.
+
+Please note that the necessary dependencies, _json-values_ and _java-fun_, are already included in
+JMeter's [lib-libraries](mighty-jmeter/lib-libraries) folder.

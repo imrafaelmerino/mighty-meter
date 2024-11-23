@@ -4,6 +4,8 @@
 
 “_Power Meets Simplicity in Just Three Clicks_”
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20Support-yellow)](https://www.buymeacoffee.com/imrafaelmerino)
+
 # MightyMeter
 
 - [Introduction](#intro)

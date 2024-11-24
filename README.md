@@ -4,6 +4,8 @@
 
 “_Power Meets Simplicity in Just Three Clicks_”
 
+[![GitHub release](https://img.shields.io/github/v/release/imrafaelmerino/mighty-meter?include_prereleases&label=Latest%20Release)](https://github.com/imrafaelmerino/mighty-meter/releases/latest)
+
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20Support-yellow)](https://www.buymeacoffee.com/imrafaelmerino)
 
 # MightyMeter
